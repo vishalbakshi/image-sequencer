@@ -1,0 +1,119 @@
+/*@font-face {
+  font-family: "Poiret One";
+  src: url("Poiret One.woff2");
+}
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Poiret One";
+}
+html, body {
+  min-height: 100vh;
+  width: 100vw;
+}
+body {
+  background: #fff;
+}
+.wrapper {
+  width: 100vw;
+  max-width: 1000px;
+  height: 100%;
+  min-height: 100vh;
+  margin: auto;
+  position: relative;
+}
+header {
+  position: relative;
+  height: 150px;
+  font-size: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-around;
+  padding: 10px 0;
+  font-size: 20px;
+}
+section {
+  position: relative;
+  width: 100%;
+  min-height: 100px;
+  padding: 10px 15px;
+  font-size: 25px;
+  margin-bottom: 50px;
+}
+.rh {
+  display: flex;
+  flex-direction: column;
+}
+section .r {
+  display: flex;
+  flex-direction: row;
+  flex: auto;
+  align-items: center;
+  justify-content: space-around;
+  margin: 10px;
+}
+section .c {
+  flex: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+section span {
+  margin: 0 5px;
+}*/
+
+#addStep select, button, #addStep input {
+  font-family: sans-serif;
+  font-size: 18px !important;
+  height: 30px !important;
+}
+.nomargin {
+  margin: 0 !important;
+}
+.details {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100%;
+}
+#steps .row {
+  display: flex;
+  flex-direction: row;
+  flex: auto;
+  align-items: center;
+  justify-content: space-around;
+  margin: 10px;
+}
+.jumbotron {
+  background: transparent;
+}
+.form-horizontal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.btn {
+  line-height: 1.2
+}
+.btn-lg {
+  line-height: 0.7
+}
+body {
+  /*background: #f8f8fa;*/
+}
+.det {
+  font-size: 1.7rem;
+}

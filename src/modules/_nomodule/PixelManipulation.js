@@ -7,27 +7,24 @@ module.exports = function PixelManipulation(image, options) {
   options = options || {};
   options.changePixel = options.changePixel || function changePixel(r, g, b, a) {
     return [r, g, b, a];
-  }
-  options.format = options.format || "jpg";
-
-  var getPixels = require("get-pixels"),
-      savePixels = require("save-pixels"),
-      base64 = require('base64-stream');
+  };
+  var getPixels = require('get-pixels'),
+      savePixels = require('save-pixels');
 
   getPixels(image.src, function(err, pixels) {
 
     if(err) {
-      console.log("Bad image path")
-      return
+      console.log('Bad image path');
+      return;
     }
 
     // iterate through pixels;
-    // this could possibly be more efficient; see 
+    // this could possibly be more efficient; see
     // https://github.com/p-v-o-s/infragram-js/blob/master/public/infragram.js#L173-L181
-    for(var x = 1; x < pixels.shape[0]; x++) {
-      for(var y = 1; y < pixels.shape[1]; y++) {
+    for(var x = 0; x < pixels.shape[0]; x++) {
+      for(var y = 0; y < pixels.shape[1]; y++) {
 
-        pixel = options.changePixel(
+        var pixel = options.changePixel(
           pixels.get(x, y, 0),
           pixels.get(x, y, 1),
           pixels.get(x, y, 2),
@@ -44,18 +41,20 @@ module.exports = function PixelManipulation(image, options) {
 
     // there may be a more efficient means to encode an image object,
     // but node modules and their documentation are essentially arcane on this point
-    var buffer = base64.encode();
-    savePixels(pixels, options.format)
-      .on('end', function() {
+    var chunks = [];
+    var totalLength = 0;
+    var r = savePixels(pixels, options.format, {quality: 100});
 
-      var img = new Image();
+    r.on('data', function(chunk){
+      totalLength += chunk.length;
+      chunks.push(chunk);
+    });
 
-      img.src = 'data:image/' + options.format + ';base64,' + buffer.read().toString();
-
-      if (options.output) options.output(img);
-
-    }).pipe(buffer);
-
+    r.on('end', function(){
+      var data = Buffer.concat(chunks, totalLength).toString('base64');
+      var datauri = 'data:image/' + options.format + ';base64,' + data;
+      if (options.output) options.output(options.image,datauri,options.format);
+      if (options.callback) options.callback();
+    });
   });
-
-}
+};
