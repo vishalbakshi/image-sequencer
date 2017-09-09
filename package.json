@@ -26,6 +26,7 @@
     "font-awesome": "~4.5.0",
     "jquery": "~2",
     "jsqr": "^0.2.2",
+    "readline-sync": "^1.4.7",
     "urify": "^2.1.0"
   },
   "devDependencies": {
@@ -47,5 +48,8 @@
     "tape": ">=4.7.0",
     "tape-run": "^3.0.0"
   },
-  "homepage": "https://github.com/publiclab/image-sequencer"
+  "homepage": "https://github.com/publiclab/image-sequencer",
+  "bin": {
+    "sequencer": "./index.js"
+  }
 }

@@ -50,7 +50,7 @@ ImageSequencer = function ImageSequencer(options) {
   // else if (options.imageUrl) loadImage(imageUrl);
 
   function addSteps(){
-    const this_ = (this.name == "ImageSequencer")?this:this.sequencer;
+    var this_ = (this.name == "ImageSequencer")?this:this.sequencer;
     var args = (this.name == "ImageSequencer")?[]:[this.images];
     var json_q = {};
     for(var arg in arguments){args.push(copy(arguments[arg]));}
@@ -77,7 +77,7 @@ ImageSequencer = function ImageSequencer(options) {
 
   function removeSteps(image,index) {
     var run = {}, indices;
-    const this_ = (this.name == "ImageSequencer")?this:this.sequencer;
+    var this_ = (this.name == "ImageSequencer")?this:this.sequencer;
     var args = (this.name == "ImageSequencer")?[]:[this.images];
     for(var arg in arguments) args.push(copy(arguments[arg]));
 
@@ -96,7 +96,7 @@ ImageSequencer = function ImageSequencer(options) {
 
   function insertSteps(image, index, name, o) {
     var run = {};
-    const this_ = (this.name == "ImageSequencer")?this:this.sequencer;
+    var this_ = (this.name == "ImageSequencer")?this:this.sequencer;
     var args = (this.name == "ImageSequencer")?[]:[this.images];
     for (var arg in arguments) args.push(arguments[arg]);
 
@@ -115,7 +115,7 @@ ImageSequencer = function ImageSequencer(options) {
   }
 
   function run(t_image,t_from) {
-    const this_ = (this.name == "ImageSequencer")?this:this.sequencer;
+    var this_ = (this.name == "ImageSequencer")?this:this.sequencer;
     var args = (this.name == "ImageSequencer")?[]:[this.images];
     for (var arg in arguments) args.push(copy(arguments[arg]));
 
@@ -176,13 +176,13 @@ ImageSequencer = function ImageSequencer(options) {
     this.events = require('./UserInterface')(UI);
   }
 
-  var exportBin = function() {
-    return require('./ExportBin')(this);
+  var exportBin = function(dir) {
+    return require('./ExportBin')(dir,this);
   }
 
   function modulesInfo(name) {
-    window.data = require('./modules/Crop/info.json');
     var modulesdata = {}
+    if(name == "load-image") return {};
     if(arguments.length==0)
       for (var modulename in modules) {
         modulesdata[modulename] = modules[modulename][1];
