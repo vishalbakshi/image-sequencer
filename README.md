@@ -21,7 +21,8 @@ It is also for prototyping some other related ideas:
 
 ## Examples:
 
-* [Single Image Demo](https://publiclab.github.io/image-sequencer/)
+* [Single Image example](https://publiclab.github.io/image-sequencer/examples/)
+* [FisheyeGl](https://publiclab.github.io/image-sequencer/examples/fisheye.html)
 
 ## Jump to:
 
