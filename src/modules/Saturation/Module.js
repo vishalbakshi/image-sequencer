@@ -1,11 +1,11 @@
 /*
- * Display only the green channel
+ * Saturate an image
  */
-module.exports = function GreenChannel(options,UI) {
+module.exports = function Saturation(options,UI) {
 
   options = options || {};
-  options.title = "Green channel only";
-  options.description = "Displays only the green channel of an image";
+  options.title = "Saturation";
+  options.description = "Saturate an image";
 
   // Tell UI that a step has been set up
   UI.onSetup(options.step);
@@ -21,7 +21,19 @@ module.exports = function GreenChannel(options,UI) {
     var step = this;
 
     function changePixel(r, g, b, a) {
-      return [0, g, 0, a];
+
+      var cR = 0.299;
+      var cG = 0.587;
+      var cB = 0.114;
+
+      var p = Math.sqrt((cR * (r*r)) + (cG * (g*g)) + (cB * (g*g)));
+
+      r = p+(r-p)*(options.saturation);
+      g = p+(g-p)*(options.saturation);
+      b = p+(b-p)*(options.saturation);
+
+
+      return [Math.round(r), Math.round(g), Math.round(b), a];
     }
 
     function output(image,datauri,mimetype){

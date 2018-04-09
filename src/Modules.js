@@ -1,9 +1,15 @@
 /*
- * Core modules and their info files
- */
+* Core modules and their info files
+*/
 module.exports = {
   'green-channel': [
     require('./modules/GreenChannel/Module'),require('./modules/GreenChannel/info')
+  ],
+  'brightness': [
+    require('./modules/Brightness/Module'),require('./modules/Brightness/info')
+  ],
+  'edge-detect':[
+    require('./modules/EdgeDetect/Module'),require('./modules/EdgeDetect/info')
   ],
   'ndvi-red': [
     require('./modules/NdviRed/Module'),require('./modules/NdviRed/info')
@@ -25,5 +31,11 @@ module.exports = {
   ],
   'dynamic': [
     require('./modules/Dynamic/Module'),require('./modules/Dynamic/info')
+  ],
+  'blur': [
+    require('./modules/Blur/Module'),require('./modules/Blur/info')
+  ],
+  'saturation': [
+    require('./modules/Saturation/Module'),require('./modules/Saturation/info')
   ]
 }
