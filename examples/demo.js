@@ -40,61 +40,63 @@ window.onload = function() {
         </div>\
         <div class="col-md-8">\
           <div class="load" style="display:none;"><i class="fa fa-circle-o-notch fa-spin"></i></div>\
-          <img alt="" class="img-thumbnail"/>\
+          <a><img alt="" class=“img-thumbnail” /></a>\
         </div>\
       </div>\
       ';
 
       var tools =
       '<div class="tools btn-group">\
-         <button confirm="Are you sure?" class="remove btn btn-xs btn-default">\
+         <button confirm="Are you sure?" class="remove btn btn btn-default">\
            <i class="fa fa-trash"></i>\
          </button>\
       </div>';
 
       step.ui = parser.parseFromString(step.ui,'text/html');
       step.ui = step.ui.querySelector('div.row');
-      step.imgElement = step.ui.querySelector('img');
+      step.linkElement =  step.ui.querySelector('a');
+      step.imgElement = step.ui.querySelector('a img');
 
       if(sequencer.modulesInfo().hasOwnProperty(step.name)) {
         var inputs = sequencer.modulesInfo(step.name).inputs;
         var outputs = sequencer.modulesInfo(step.name).outputs;
-        var io = Object.assign(inputs, outputs);
-        for (var i in io) {
-          var isInput = inputs.hasOwnProperty(i);
-          var ioUI = "";
-          var inputDesc = (isInput)?inputs[i]:{};
+        var merged = Object.assign(inputs, outputs); // combine outputs w inputs
+        for (var paramName in merged) {
+          var isInput = inputs.hasOwnProperty(paramName);
+          var html = "";
+          var inputDesc = (isInput)?inputs[paramName]:{};
           if (!isInput) {
-            ioUI += "<span class=\"output\"></span>";
-          }
-          else if (inputDesc.type.toLowerCase() == "select") {
-            ioUI += "<select class=\"form-control\" name=\""+i+"\">";
+            html += "<span class=\"output\"></span>";
+          } else if (inputDesc.type.toLowerCase() == "select") {
+            html += "<select class=\"form-control\" name=\""+paramName+"\">";
             for (var option in inputDesc.values) {
-              ioUI += "<option>"+inputDesc.values[option]+"</option>";
+              html += "<option>"+inputDesc.values[option]+"</option>";
             }
-            ioUI += "</select>";
-          }
-          else {
-            ioUI = "<input class=\"form-control\" type=\""+inputDesc.type+"\" name=\""+i+"\">";
+            html += "</select>";
+          } else {
+            html = "<input class=\"form-control\" type=\""+inputDesc.type+"\" name=\""+paramName+"\">";
           }
           var div = document.createElement('div');
           div.className = "row";
-          div.setAttribute('name', i);
+          div.setAttribute('name', paramName);
+          var description = inputs[paramName].desc || paramName;
           div.innerHTML = "<div class='det'>\
-                             <label for='" + i + "'>" + i + "</label>\
-                             "+ioUI+"\
+                             <label for='" + paramName + "'>" + description + "</label>\
+                             "+html+"\
                            </div>";
           step.ui.querySelector('div.details').appendChild(div);
         }
         $(step.ui.querySelector('div.details')).append("<p><button class='btn btn-default btn-save'>Save</button></p>");
 
-        // on clicking Save in the details pane of the step
-        $(step.ui.querySelector('div.details .btn-save')).click(function saveOptions() {
+	function saveOptions() {
           $(step.ui.querySelector('div.details')).find('input,select').each(function(i, input) {
             step.options[$(input).attr('name')] = input.value;
           });
           sequencer.run();
-        });
+        }
+
+        // on clicking Save in the details pane of the step
+        $(step.ui.querySelector('div.details .btn-save')).click(saveOptions);
       }
 
       if(step.name != "load-image")
@@ -116,11 +118,20 @@ window.onload = function() {
       $(step.ui.querySelector('img')).show();
 
       step.imgElement.src = step.output;
+      step.linkElement.href = step.output;
+
+      function fileExtension(output) {
+        return output.split('/')[1].split(';')[0];
+      }
+
+      step.linkElement.download = step.name + "." + fileExtension(step.output);
+      step.linkElement.target = "_blank";
+
       if(sequencer.modulesInfo().hasOwnProperty(step.name)) {
         var inputs = sequencer.modulesInfo(step.name).inputs;
         var outputs = sequencer.modulesInfo(step.name).outputs;
         for (var i in inputs) {
-          if (step.options[i] !== undefined && 
+          if (step.options[i] !== undefined &&
               inputs[i].type.toLowerCase() === "input") step.ui.querySelector('div[name="' + i + '"] input')
                                                                .value = step.options[i];
           if (step.options[i] !== undefined &&
@@ -155,40 +166,12 @@ window.onload = function() {
 
   });
 
-
-  // File handling
-
   $('#addStep select').on('change', selectNewStepUI);
 
   function selectNewStepUI() {
-    $('#options').html('');
     var m = $('#addStep select').val();
-    for(var input in modulesInfo[m].inputs) {
-      var inputUI = "";
-      var inputDesc = modulesInfo[m].inputs[input];
-      if (inputDesc.type.toLowerCase() == "select") {
-        inputUI += "<select class=\"form-control\" name=\""+input+"\">";
-        for (var option in inputDesc.values) {
-          inputUI += "<option>"+inputDesc.values[option]+"</option>";
-        }
-        inputUI += "</select>";
-      }
-      else {
-        inputUI = "<input class=\"form-control\" type=\""+inputDesc.type+"\" name=\""+input+"\">";
-      }
-      $('#options').append(
-        '<div class="row">\
-           <div class="col-md-5 labels">\
-             '+input+':\
-           </div>\
-           <div class="col-md-5">\
-             '+inputUI+'\
-           </div>\
-         </div>'
-      );
-    }
+    $('#addStep .info').html(sequencer.modulesInfo(m).description);
   }
-
 
   function addStepUI() {
     var options = {};

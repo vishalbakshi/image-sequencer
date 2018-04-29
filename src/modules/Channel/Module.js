@@ -1,40 +1,42 @@
-module.exports = function SegmentedColormap(options,UI) {
+/*
+ * Display only one color channel
+ */
+module.exports = function Channel(options,UI) {
 
   options = options || {};
-  options.title = "Segmented Colormap";
+  options.channel = options.channel || "green";
 
-  // Tell the UI that a step has been set up.
+  // Tell UI that a step has been set up
   UI.onSetup(options.step);
   var output;
 
-  // This function is called on every draw.
   function draw(input,callback,progressObj) {
 
     progressObj.stop(true);
     progressObj.overrideFlag = true;
 
-    // Tell the UI that the step is being drawn
+    // Tell UI that a step is being drawn
     UI.onDraw(options.step);
     var step = this;
 
     function changePixel(r, g, b, a) {
-      var combined = (r + g + b) / 3.000;
-      var res = require('./SegmentedColormap')(combined, options);
-      return [res[0], res[1], res[2], 255];
+      if (options.channel == "red")   return [r, 0, 0, a];
+      if (options.channel == "green") return [0, g, 0, a];
+      if (options.channel == "blue")  return [0, 0, b, a];
     }
 
     function output(image,datauri,mimetype){
 
-      // This output is accessible by Image Sequencer
-      step.output = { src: datauri, format: mimetype };
+      // This output is accesible by Image Sequencer
+      step.output = {src:datauri,format:mimetype};
 
-      // This output is accessible by the UI
+      // This output is accessible by UI
       options.step.output = datauri;
 
-      // Tell the UI that the draw is complete
+      // Tell UI that step ahs been drawn
       UI.onComplete(options.step);
-
     }
+
     return require('../_nomodule/PixelManipulation.js')(input, {
       output: output,
       changePixel: changePixel,
@@ -48,7 +50,8 @@ module.exports = function SegmentedColormap(options,UI) {
 
   return {
     options: options,
-    draw: draw,
+    //setup: setup, // optional
+    draw:  draw,
     output: output,
     UI: UI
   }

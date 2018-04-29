@@ -1,41 +1,44 @@
 /*
- * Display only the green channel
+ * NDVI with red filter (blue channel is infrared)
  */
-module.exports = function GreenChannel(options,UI) {
+module.exports = function Ndvi(options,UI) {
 
   options = options || {};
-  options.title = "Green channel only";
-  options.description = "Displays only the green channel of an image";
+  options.filter = options.filter || "red";
 
-  // Tell UI that a step has been set up
+  // Tell the UI that a step has been set up.
   UI.onSetup(options.step);
   var output;
 
+  // The function which is called on every draw.
   function draw(input,callback,progressObj) {
 
     progressObj.stop(true);
     progressObj.overrideFlag = true;
 
-    // Tell UI that a step is being drawn
+    // Tell the UI that a step is being drawn.
     UI.onDraw(options.step);
     var step = this;
 
     function changePixel(r, g, b, a) {
-      return [0, g, 0, a];
+      if (options.filter == "red") var ndvi = (b - r) / (1.00 * b + r);
+      if (options.filter == "blue") var ndvi = (r - b) / (1.00 * b + r);
+      var x = 255 * (ndvi + 1) / 2;
+      return [x, x, x, a];
     }
 
     function output(image,datauri,mimetype){
 
-      // This output is accesible by Image Sequencer
+      // This output is accessible by Image Sequencer
       step.output = {src:datauri,format:mimetype};
 
-      // This output is accessible by UI
+      // This output is accessible by the UI.
       options.step.output = datauri;
 
-      // Tell UI that step ahs been drawn
+      // Tell the UI that step has been drawn succesfully.
       UI.onComplete(options.step);
     }
-
+    
     return require('../_nomodule/PixelManipulation.js')(input, {
       output: output,
       changePixel: changePixel,
@@ -49,9 +52,8 @@ module.exports = function GreenChannel(options,UI) {
 
   return {
     options: options,
-    //setup: setup, // optional
-    draw:  draw,
+    draw: draw,
     output: output,
-    UI: UI
+    UI:UI
   }
 }
