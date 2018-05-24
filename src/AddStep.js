@@ -1,8 +1,10 @@
 // add steps to the sequencer 
+// TODO: reduce redundancy with InsertStep; this should be a specific usage of InsertStep at the final position
 function AddStep(_sequencer, image, name, o) {
 
   function addStep(image, name, o_) {
-    var moduleInfo = _sequencer.modules[name][1];
+    if (_sequencer.modules[name]) var moduleInfo = _sequencer.modules[name][1];
+    else console.log('Module ' + name + ' not found.');
 
     var o = _sequencer.copy(o_);
     o.number = _sequencer.options.sequencerCounter++; // gives a unique ID to each step
@@ -23,7 +25,10 @@ function AddStep(_sequencer, image, name, o) {
       options: o
     };
     var UI = _sequencer.events;
-    var module = _sequencer.modules[name][0](o,UI);
+    this.getStep = function getStep(offset) {
+      return _sequencer.images[image].steps.slice(offset - 1)[0];
+    }
+    var module = _sequencer.modules[name][0].bind(this)(o, UI);
     _sequencer.images[image].steps.push(module);
 
     return true;
