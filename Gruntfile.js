@@ -1,4 +1,4 @@
-module.exports = function (grunt) {
+module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-browserify");
   grunt.loadNpmTasks("grunt-contrib-uglify-es");
   grunt.loadNpmTasks("grunt-browser-sync");
@@ -15,7 +15,7 @@ module.exports = function (grunt) {
         livereload: true
       },
       source: {
-        files: ["src/*.js", "src/*/*.js", "src/*/*/*.js", "Gruntfile.js"],
+        files: ["src/**/*", "Gruntfile.js"],
         tasks: ["build:js"]
       }
     },

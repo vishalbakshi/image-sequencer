@@ -7,9 +7,9 @@ module.exports = function GetFormat(src) {
   var format = undefined; // haha default
 
   // EXAMPLE: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAQABADASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAABgj/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABykX//Z";
-  // EXAMPLE: "http://example.com/example.png" 
-  // EXAMPLE: "/example.png" 
- 
+  // EXAMPLE: "http://example.com/example.png"
+  // EXAMPLE: "/example.png"
+
   if (isDataUrl(src)) {
     format = src.split(';')[0].split('/').pop();
   } else {
@@ -24,6 +24,17 @@ module.exports = function GetFormat(src) {
 
   if (format === "jpeg") format = "jpg";
 
-  return format;
+  function validateFormat(data){
+    let supportedFormats = [
+      'jpg',
+      'jpeg',
+      'png',
+      'gif',
+      'canvas',
+    ];
+    return supportedFormats.includes(data);
+  }
+
+  return validateFormat(format)?format:'jpg';
 
 }

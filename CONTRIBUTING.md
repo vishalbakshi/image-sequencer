@@ -35,13 +35,10 @@ Any module must follow this basic format:
 ```js
 module.exports = function ModuleName(options,UI) {
 
-  options = options || {};
-  UI.onSetup(options.step);
   var output;
+  // Module requirements have been simplified in version 3, see https://github.com/publiclab/image-sequencer/blob/master/CONTRIBUTING.md#contributing-modules
 
   function draw(input,callback) {
-
-    UI.onDraw(options.step); // tell the UI to "draw"
 
     var output = function(input){
       /* do something with the input */
@@ -49,9 +46,7 @@ module.exports = function ModuleName(options,UI) {
     }
 
     this.output = output(input); // run the output and assign it to this.output
-    options.step.output = output.src;
     callback();
-    UI.onComplete(options.step); // tell UI we are done
   }
 
   return {
@@ -61,6 +56,57 @@ module.exports = function ModuleName(options,UI) {
     UI: UI
   }
 }
+```
+
+Image Sequencer modules are designed to be run either in the browser or in a Node.js environment. For dynamically loaded modules, that means that any uses of `require()` to include an external library must be compiled using a system like `browserify` or `webpack` to ensure browser compatibility. An example of this can be found here:
+
+https://github.com/tech4gt/image-sequencer
+
+If you wish to offer a module without browser-compatibility, please indicate this in the returned `info` object as:
+
+module.exports = [
+  ModuleName,
+  { only: ['node'] }
+];
+
+If you believe that full cross-compatibility is possible, but need help, please open an issue on your module's issue tracker requesting assistance (and potentially link to it from an inline comment or the module description).
+
+Any Independent Module Must follow this basic format
+```js
+function ModuleName(options,UI) {
+
+  var output;
+
+  function draw(input,callback) {
+
+    var output = function(input){
+      /* do something with the input */
+      return input;
+    }
+
+    this.output = output(input); // run the output and assign it to this.output
+    callback();
+  }
+
+  return {
+    options: options,
+    draw: draw,
+    output: output,
+    UI: UI
+  };
+}
+
+  module.exports = [ModuleName,{
+      "name": "ModuleName",
+      "description": "",
+      "inputs": {
+        // inputs here
+      }
+      /* Info can be defined here or imported from a json file */
+      // require('./info.json') This only works in node
+      // In a module compiled with browserify or webpack, a require() can be used to
+      // load a standard info.json file.
+      ];
 ```
 
 
@@ -84,9 +130,18 @@ The `draw` method should accept an `input` parameter, which will be an object of
 ```js
 input = {
   src: "datauri of an image here",
-  format: "jpeg/png/etc"
+  format: "jpeg/png/etc",
+  // utility functions
+  getPixels: "function to get Image pixels. Wrapper around https://npmjs.com/get-pixels",
+  savePixels: "function to save Image pixels. Wrapper around https://npmjs.com/save-pixels",
+  lodash: "wrapper around lodash library, https://github.com/lodash",
+  dataUriToBuffer: "wrapper around https://www.npmjs.com/package/data-uri-to-buffer",
+  pixelManipulation: "general purpose pixel manipulation API, see https://github.com/publiclab/image-sequencer/blob/master/src/modules/_nomodule/PixelManipulation.js"
 }
 ```
+For example usage for pixelManipulation see https://github.com/publiclab/image-sequencer/blob/master/src/modules/Invert/Module.js
+
+**The module is included in the browser inside a script tag and since the code runs directly in the browser if any other module is required apart from the apis available on the input object, it should be either bundled with the module code and imported in es6 format or the module code must be browserified before distribution for browser**
 
 The draw method is run every time the step is `run` using `sequencer.run()`.
 So any calculations must go **into** the `draw()` method's definition.
@@ -171,32 +226,25 @@ The default "loading spinner" can be optionally overriden with a custom progress
 ```js
 module.exports = function ModuleName(options,UI) {
 
-  options = options || {};
-  UI.onSetup(options.step);
   var output;
 
   function draw(input,callback,progressObj) {
 
     /* If you wish to supply your own progress bar you need to override progressObj */
-
     progressObj.stop() // Stop the current progress spinner
 
-    progressObj.overrideFlag = true; // Tell image sequencer that you will supply your own progressBar 
+    progressObj.overrideFlag = true; // Tell image sequencer that you will supply your own progressBar
 
     /* Override the object and give your own progress Bar */
     progressObj = /* Your own progress Object */
 
-    UI.onDraw(options.step);
-
     var output = function(input){
-      /* do something with the input */ 
+      /* do something with the input */
       return input;
     };
 
     this.output = output();
-    options.step.output = output.src;
     callback();
-    UI.onComplete(options.step);
   }
 
   return {
@@ -217,3 +265,70 @@ See existing module `green-channel` for an example: https://github.com/publiclab
 The `green-channel` module is included into the core modules here: https://github.com/publiclab/image-sequencer/blob/master/src/Modules.js#L5-L7
 
 For help integrating, please open an issue.
+
+## Meta Module
+
+IMAGE SEQUENCER supports "meta modules" -- modules made of other modules. The syntax and structure of these meta modules is very similar to standard modules. Sequencer can also genarate meta modules dynamically with the function `createMetaModule` which can be called in the following ways
+
+```js
+// stepsString is a stringified sequence
+sequencer.createMetaModule(stepsString,info)
+
+/* stepsArray is the array of objects in this format
+* [
+*   {name: "moduleName",options: {}},
+*   {name: "moduleName",options: {}}
+* ]
+*/
+sequencer.createMetaModule(stepsArray,info)
+```
+
+A Meta module can also be contributed like a normal module with an info and a Module.js. A basic Meta module shall follow the following format
+
+
+```js
+// Module.js
+module.exports = function metaModuleFun(){
+  this.expandSteps([
+    { 'name': 'module-name', 'options': {} },
+    { 'name': 'module-name', options: {} }
+    ]);
+}
+```
+
+```json
+// Info
+{
+  "name": "meta-moduleName",
+  "description": "",
+  "length": //Integer representing number of steps in the metaModule
+}
+```
+
+```js
+//index.js
+module.exports = [
+  require('./Module.js'),
+  require('./info.json')
+]
+```
+
+All of the above can also be combined together to form a single file module.
+
+```js
+// MetaModule.js
+module.export = [
+  function (){
+  this.expandSteps([
+    { 'name': 'module-name', 'options': {} },
+    { 'name': 'module-name', options: {} }
+    ]);
+  },
+  {
+  "name": "meta-moduleName",
+  "description": "",
+  "length": //Integer representing number of steps in the metaModule
+  }
+]
+```
+The length is absolutely required for a meta-module, since sequencer is optimized to re-run minimum number of steps when a step is added in the UI which is 1 in the case of normal modules, if the added step is a meta-module the length of the sequence governs the number of steps to re-run.
