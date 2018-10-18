@@ -45,7 +45,7 @@ function DefaultHtmlStepUi(_sequencer, options) {
     var parser = new DOMParser();
     step.ui = parser.parseFromString(step.ui, "text/html");
     step.ui = step.ui.querySelector("div.row");
-    step.linkElement = step.ui.querySelector("a");
+    step.linkElements = step.ui.querySelectorAll("a");
     step.imgElement = step.ui.querySelector("a img");
 
     if (_sequencer.modulesInfo().hasOwnProperty(step.name)) {
@@ -101,7 +101,7 @@ function DefaultHtmlStepUi(_sequencer, options) {
         $(step.ui.querySelector("div.details .btn-save")).prop("disabled",false);
       }
 
-      $(step.ui.querySelector(".target")).change(toggleSaveButton);
+      $(step.ui.querySelectorAll(".target")).focus(toggleSaveButton);
 
       $(step.ui.querySelector("div.details")).append(
         "<p><button class='btn btn-default btn-save' disabled = 'true' >Save</button><span> Press save to see changes</span></p>"
@@ -145,15 +145,21 @@ function DefaultHtmlStepUi(_sequencer, options) {
     $(step.ui.querySelector("img")).show();
 
     step.imgElement.src = step.output;
-    step.linkElement.href = step.output;
+    var imgthumbnail = step.ui.querySelector(".img-thumbnail");
+    for(let index=0; index < step.linkElements.length; index++) {
+      if(step.linkElements[index].contains(imgthumbnail))
+        step.linkElements[index].href = step.output;
+    }
 
     // TODO: use a generalized version of this
     function fileExtension(output) {
       return output.split("/")[1].split(";")[0];
     }
 
-    step.linkElement.download = step.name + "." + fileExtension(step.output);
-    step.linkElement.target = "_blank";
+    for(let index=0; index < step.linkElements.length; index++) {
+      step.linkElements[index].download = step.name + "." + fileExtension(step.output);
+      step.linkElements[index].target = "_blank";
+    }
 
     // fill inputs with stored step options
     if (_sequencer.modulesInfo().hasOwnProperty(step.name)) {
