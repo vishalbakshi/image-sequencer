@@ -18395,7 +18395,7 @@ return /******/ (function(modules) { // webpackBootstrap
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.17.10';
+  var VERSION = '4.17.11';
 
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
@@ -18659,7 +18659,7 @@ return /******/ (function(modules) { // webpackBootstrap
   var reHasUnicode = RegExp('[' + rsZWJ + rsAstralRange  + rsComboRange + rsVarRange + ']');
 
   /** Used to detect strings that need a more robust regexp to match words. */
-  var reHasUnicodeWord = /[a-z][A-Z]|[A-Z]{2,}[a-z]|[0-9][a-zA-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/;
+  var reHasUnicodeWord = /[a-z][A-Z]|[A-Z]{2}[a-z]|[0-9][a-zA-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/;
 
   /** Used to assign default `context` object properties. */
   var contextProps = [
@@ -19605,20 +19605,6 @@ return /******/ (function(modules) { // webpackBootstrap
       }
     }
     return result;
-  }
-
-  /**
-   * Gets the value at `key`, unless `key` is "__proto__".
-   *
-   * @private
-   * @param {Object} object The object to query.
-   * @param {string} key The key of the property to get.
-   * @returns {*} Returns the property value.
-   */
-  function safeGet(object, key) {
-    return key == '__proto__'
-      ? undefined
-      : object[key];
   }
 
   /**
@@ -22078,7 +22064,7 @@ return /******/ (function(modules) { // webpackBootstrap
           if (isArguments(objValue)) {
             newValue = toPlainObject(objValue);
           }
-          else if (!isObject(objValue) || (srcIndex && isFunction(objValue))) {
+          else if (!isObject(objValue) || isFunction(objValue)) {
             newValue = initCloneObject(srcValue);
           }
         }
@@ -24999,6 +24985,22 @@ return /******/ (function(modules) { // webpackBootstrap
         array[length] = isIndex(index, arrLength) ? oldArray[index] : undefined;
       }
       return array;
+    }
+
+    /**
+     * Gets the value at `key`, unless `key` is "__proto__".
+     *
+     * @private
+     * @param {Object} object The object to query.
+     * @param {string} key The key of the property to get.
+     * @returns {*} Returns the property value.
+     */
+    function safeGet(object, key) {
+      if (key == '__proto__') {
+        return;
+      }
+
+      return object[key];
     }
 
     /**
@@ -37881,6 +37883,9 @@ function formatNumber(number, decimals, dec_point, thousands_sep) {
 }).call(this,require('_process'))
 },{"_process":98,"charm":5}],75:[function(require,module,exports){
 (function (process){
+// .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
+// backported and transplited with Babel, with backwards-compat fixes
+
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -37931,14 +37936,6 @@ function normalizeArray(parts, allowAboveRoot) {
 
   return parts;
 }
-
-// Split a filename into [root, dir, basename, ext], unix version
-// 'root' is just a slash, or nothing.
-var splitPathRe =
-    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
-var splitPath = function(filename) {
-  return splitPathRe.exec(filename).slice(1);
-};
 
 // path.resolve([from ...], to)
 // posix version
@@ -38055,37 +38052,120 @@ exports.relative = function(from, to) {
 exports.sep = '/';
 exports.delimiter = ':';
 
-exports.dirname = function(path) {
-  var result = splitPath(path),
-      root = result[0],
-      dir = result[1];
-
-  if (!root && !dir) {
-    // No dirname whatsoever
-    return '.';
+exports.dirname = function (path) {
+  if (typeof path !== 'string') path = path + '';
+  if (path.length === 0) return '.';
+  var code = path.charCodeAt(0);
+  var hasRoot = code === 47 /*/*/;
+  var end = -1;
+  var matchedSlash = true;
+  for (var i = path.length - 1; i >= 1; --i) {
+    code = path.charCodeAt(i);
+    if (code === 47 /*/*/) {
+        if (!matchedSlash) {
+          end = i;
+          break;
+        }
+      } else {
+      // We saw the first non-path separator
+      matchedSlash = false;
+    }
   }
 
-  if (dir) {
-    // It has a dirname, strip trailing slash
-    dir = dir.substr(0, dir.length - 1);
+  if (end === -1) return hasRoot ? '/' : '.';
+  if (hasRoot && end === 1) {
+    // return '//';
+    // Backwards-compat fix:
+    return '/';
   }
-
-  return root + dir;
+  return path.slice(0, end);
 };
 
+function basename(path) {
+  if (typeof path !== 'string') path = path + '';
 
-exports.basename = function(path, ext) {
-  var f = splitPath(path)[2];
-  // TODO: make this comparison case-insensitive on windows?
+  var start = 0;
+  var end = -1;
+  var matchedSlash = true;
+  var i;
+
+  for (i = path.length - 1; i >= 0; --i) {
+    if (path.charCodeAt(i) === 47 /*/*/) {
+        // If we reached a path separator that was not part of a set of path
+        // separators at the end of the string, stop now
+        if (!matchedSlash) {
+          start = i + 1;
+          break;
+        }
+      } else if (end === -1) {
+      // We saw the first non-path separator, mark this as the end of our
+      // path component
+      matchedSlash = false;
+      end = i + 1;
+    }
+  }
+
+  if (end === -1) return '';
+  return path.slice(start, end);
+}
+
+// Uses a mixed approach for backwards-compatibility, as ext behavior changed
+// in new Node.js versions, so only basename() above is backported here
+exports.basename = function (path, ext) {
+  var f = basename(path);
   if (ext && f.substr(-1 * ext.length) === ext) {
     f = f.substr(0, f.length - ext.length);
   }
   return f;
 };
 
+exports.extname = function (path) {
+  if (typeof path !== 'string') path = path + '';
+  var startDot = -1;
+  var startPart = 0;
+  var end = -1;
+  var matchedSlash = true;
+  // Track the state of characters (if any) we see before our first dot and
+  // after any path separator we find
+  var preDotState = 0;
+  for (var i = path.length - 1; i >= 0; --i) {
+    var code = path.charCodeAt(i);
+    if (code === 47 /*/*/) {
+        // If we reached a path separator that was not part of a set of path
+        // separators at the end of the string, stop now
+        if (!matchedSlash) {
+          startPart = i + 1;
+          break;
+        }
+        continue;
+      }
+    if (end === -1) {
+      // We saw the first non-path separator, mark this as the end of our
+      // extension
+      matchedSlash = false;
+      end = i + 1;
+    }
+    if (code === 46 /*.*/) {
+        // If this is our first dot, mark it as the start of our extension
+        if (startDot === -1)
+          startDot = i;
+        else if (preDotState !== 1)
+          preDotState = 1;
+    } else if (startDot !== -1) {
+      // We saw a non-dot and non-path separator before our dot, so we should
+      // have a good chance at having a non-empty extension
+      preDotState = -1;
+    }
+  }
 
-exports.extname = function(path) {
-  return splitPath(path)[3];
+  if (startDot === -1 || end === -1 ||
+      // We saw a non-dot character immediately before the dot
+      preDotState === 0 ||
+      // The (right-most) trimmed path component is exactly '..'
+      preDotState === 1 && startDot === end - 1 && startDot === startPart + 1) {
+    return '';
+  }
+  return path.slice(startDot, end);
 };
 
 function filter (xs, f) {
@@ -48026,7 +48106,7 @@ ImageSequencer = function ImageSequencer(options) {
 }
 module.exports = ImageSequencer;
 
-},{"./AddStep":136,"./ExportBin":137,"./FormatInput":138,"./InsertStep":140,"./Modules":141,"./ReplaceImage":142,"./Run":143,"./SavedSequences.json":145,"./ui/LoadImage":215,"./ui/SetInputStep":216,"./ui/UserInterface":217,"./util/getStep.js":219,"fs":42}],140:[function(require,module,exports){
+},{"./AddStep":136,"./ExportBin":137,"./FormatInput":138,"./InsertStep":140,"./Modules":141,"./ReplaceImage":142,"./Run":143,"./SavedSequences.json":145,"./ui/LoadImage":218,"./ui/SetInputStep":219,"./ui/UserInterface":220,"./util/getStep.js":222,"fs":42}],140:[function(require,module,exports){
 const getStepUtils = require('./util/getStep.js');
 
 // insert one or more steps at a given index in the sequencer
@@ -48086,7 +48166,7 @@ function InsertStep(ref, image, index, name, o) {
 }
 module.exports = InsertStep;
 
-},{"./util/getStep.js":219}],141:[function(require,module,exports){
+},{"./util/getStep.js":222}],141:[function(require,module,exports){
 /*
 * Core modules and their info files
 */
@@ -48110,10 +48190,11 @@ module.exports = {
   'invert': require('image-sequencer-invert'),
   'ndvi-colormap': require('./modules/NdviColormap'),
   'colorbar': require('./modules/Colorbar'),
+  'histogram': require('./modules/Histogram'),
   'gamma-correction': require('./modules/GammaCorrection'),
   'convolution': require('./modules/Convolution'),
 }
-},{"./modules/Average":147,"./modules/Blend":150,"./modules/Blur":154,"./modules/Brightness":157,"./modules/Channel":160,"./modules/Colorbar":163,"./modules/Colormap":167,"./modules/Convolution":171,"./modules/Crop":176,"./modules/DecodeQr":179,"./modules/Dynamic":182,"./modules/EdgeDetect":186,"./modules/FisheyeGl":189,"./modules/GammaCorrection":192,"./modules/Gradient":195,"./modules/ImportImage":199,"./modules/Ndvi":203,"./modules/NdviColormap":206,"./modules/Overlay":209,"./modules/Saturation":212,"image-sequencer-invert":56}],142:[function(require,module,exports){
+},{"./modules/Average":147,"./modules/Blend":150,"./modules/Blur":154,"./modules/Brightness":157,"./modules/Channel":160,"./modules/Colorbar":163,"./modules/Colormap":167,"./modules/Convolution":171,"./modules/Crop":176,"./modules/DecodeQr":179,"./modules/Dynamic":182,"./modules/EdgeDetect":186,"./modules/FisheyeGl":189,"./modules/GammaCorrection":192,"./modules/Gradient":195,"./modules/Histogram":198,"./modules/ImportImage":202,"./modules/Ndvi":209,"./modules/NdviColormap":205,"./modules/Overlay":212,"./modules/Saturation":215,"image-sequencer-invert":56}],142:[function(require,module,exports){
 // Uses a given image as input and replaces it with the output.
 // Works only in the browser.
 function ReplaceImage(ref,selector,steps,options) {
@@ -48269,7 +48350,7 @@ function Run(ref, json_q, callback, ind, progressObj) {
 }
 module.exports = Run;
 
-},{"./RunToolkit":144,"./util/getStep.js":219}],144:[function(require,module,exports){
+},{"./RunToolkit":144,"./util/getStep.js":222}],144:[function(require,module,exports){
 const getPixels = require('get-pixels');
 const pixelManipulation = require('./modules/_nomodule/PixelManipulation');
 const lodash = require('lodash');
@@ -48284,7 +48365,7 @@ module.exports = function(input) {
     input.savePixels = savePixels;
     return input;
 }
-},{"./modules/_nomodule/PixelManipulation":214,"data-uri-to-buffer":13,"get-pixels":23,"lodash":62,"save-pixels":111}],145:[function(require,module,exports){
+},{"./modules/_nomodule/PixelManipulation":217,"data-uri-to-buffer":13,"get-pixels":23,"lodash":62,"save-pixels":111}],145:[function(require,module,exports){
 module.exports={"sample":[{"name":"invert","options":{}},{"name":"channel","options":{"channel":"red"}},{"name":"blur","options":{"blur":"5"}}]}
 },{}],146:[function(require,module,exports){
 /*
@@ -48364,7 +48445,7 @@ module.exports = function Average(options, UI){
     }
 }
 
-},{"../_nomodule/PixelManipulation.js":214}],147:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":217}],147:[function(require,module,exports){
 module.exports = [
     require('./Module'),
     require('./info.json')
@@ -48442,7 +48523,7 @@ module.exports = function Dynamic(options, UI, util) {
   }
 }
 
-},{"../_nomodule/PixelManipulation.js":214,"get-pixels":23}],150:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":217,"get-pixels":23}],150:[function(require,module,exports){
 arguments[4][147][0].apply(exports,arguments)
 },{"./Module":149,"./info.json":151,"dup":147}],151:[function(require,module,exports){
 module.exports={
@@ -48592,17 +48673,20 @@ module.exports = function Blur(options, UI) {
     }
 }
 
-},{"../_nomodule/PixelManipulation.js":214,"./Blur":152}],154:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":217,"./Blur":152}],154:[function(require,module,exports){
 arguments[4][147][0].apply(exports,arguments)
 },{"./Module":153,"./info.json":155,"dup":147}],155:[function(require,module,exports){
 module.exports={
     "name": "Blur",
-    "description": "Gaussian blur an image by a given value, typically 0-5",
+    "description": "Applies a Gaussian blur given by the intensity value",
     "inputs": {
         "blur": {
-            "type": "integer",
-            "desc": "amount of gaussian blur(Less blur gives more detail, typically 0-5)",
-            "default": 2
+            "type": "range",
+            "desc": "Amount of gaussian blur(Less blur gives more detail, typically 0-5)",
+            "default": "2",
+            "min": "0",
+            "max": "5",
+            "step": "0.25"
         }
     }
 }
@@ -48663,7 +48747,7 @@ module.exports = function Brightness(options,UI){
     }
 }
 
-},{"../_nomodule/PixelManipulation.js":214}],157:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":217}],157:[function(require,module,exports){
 arguments[4][147][0].apply(exports,arguments)
 },{"./Module":156,"./info.json":158,"dup":147}],158:[function(require,module,exports){
 module.exports={
@@ -48671,10 +48755,12 @@ module.exports={
   "description": "Change the brightness of the image by given percent value",
   "inputs": {
       "brightness": {
-          "type": "number",
+          "type": "range",
           "desc": "% brightness for the new image",
-          "placeholder": "0",
-          "default": 0 
+          "default": "0",
+          "min": "0",
+          "max": "100",
+          "step": "1"
       }
   } 
 }
@@ -48729,7 +48815,7 @@ module.exports = function Channel(options, UI) {
   }
 }
 
-},{"../_nomodule/PixelManipulation.js":214}],160:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":217}],160:[function(require,module,exports){
 arguments[4][147][0].apply(exports,arguments)
 },{"./Module":159,"./info.json":161,"dup":147}],161:[function(require,module,exports){
 module.exports={
@@ -48931,7 +49017,7 @@ module.exports = function Colormap(options,UI) {
   }
 }
 
-},{"../_nomodule/PixelManipulation.js":214,"./Colormap":165}],167:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":217,"./Colormap":165}],167:[function(require,module,exports){
 arguments[4][147][0].apply(exports,arguments)
 },{"./Module":166,"./info.json":168,"dup":147}],168:[function(require,module,exports){
 module.exports={
@@ -49066,7 +49152,7 @@ module.exports = function Convolution(options, UI) {
     }
 }
 
-},{"../_nomodule/PixelManipulation.js":214,"./Convolution":169}],171:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":217,"./Convolution":169}],171:[function(require,module,exports){
 arguments[4][147][0].apply(exports,arguments)
 },{"./Module":170,"./info.json":172,"dup":147}],172:[function(require,module,exports){
 module.exports={
@@ -49479,7 +49565,7 @@ module.exports = function Dynamic(options,UI) {
   }
 }
 
-},{"../_nomodule/PixelManipulation.js":214}],182:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":217}],182:[function(require,module,exports){
 arguments[4][147][0].apply(exports,arguments)
 },{"./Module":181,"./info.json":183,"dup":147}],183:[function(require,module,exports){
 module.exports={
@@ -49744,7 +49830,7 @@ module.exports = function edgeDetect(options, UI) {
   }
 }
 
-},{"../_nomodule/PixelManipulation.js":214,"./EdgeUtils":184,"ndarray-gaussian-filter":67}],186:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":217,"./EdgeUtils":184,"ndarray-gaussian-filter":67}],186:[function(require,module,exports){
 arguments[4][147][0].apply(exports,arguments)
 },{"./Module":185,"./info.json":187,"dup":147}],187:[function(require,module,exports){
 module.exports={
@@ -49900,12 +49986,12 @@ module.exports={
     },
     "fragmentSrc": {
       "type": "PATH",
-      "desc": "Patht to a WebGL fragment shader file",
+      "desc": "Path to a WebGL fragment shader file",
       "default": "(inbuilt)"
     },
     "vertexSrc": {
       "type": "PATH",
-      "desc": "Patht to a WebGL vertex shader file",
+      "desc": "Path to a WebGL vertex shader file",
       "default": "(inbuilt)"
     }
   }
@@ -49957,7 +50043,7 @@ module.exports = function Gamma(options,UI){
     }
 }
 
-},{"../_nomodule/PixelManipulation.js":214}],192:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":217}],192:[function(require,module,exports){
 arguments[4][147][0].apply(exports,arguments)
 },{"./Module":191,"./info.json":193,"dup":147}],193:[function(require,module,exports){
 module.exports={
@@ -50048,6 +50134,122 @@ module.exports={
 }
 },{}],197:[function(require,module,exports){
 /*
+ * Calculates the histogram of the image
+ */
+module.exports = function Channel(options, UI) {
+
+    var output;
+
+    function draw(input, callback, progressObj) {
+
+        options.gradient = options.gradient || "true";
+        options.gradient = JSON.parse(options.gradient);
+
+        progressObj.stop(true);
+        progressObj.overrideFlag = true;
+
+        var step = this, hist = new Array(256).fill(0);
+
+        function changePixel(r, g, b, a) {
+            let pixVal = Math.round((r + g + b) / 3);
+            hist[pixVal]++;
+            return [r, g, b, a];
+        }
+
+        function extraManipulation(pixels) {
+            // if (!options.inBrowser)
+            //     require('fs').writeFileSync('./output/histo.txt', hist.reduce((tot, cur, idx) => `${tot}\n${idx} : ${cur}`, ``));
+            var newarray = new Uint8Array(4 * 256 * 256);
+            pixels.data = newarray;
+            pixels.shape = [256, 256, 4];
+            pixels.stride[1] = 4 * 256;
+
+            for (let x = 0; x < 256; x++) {
+                for (let y = 0; y < 256; y++) {
+                    pixels.set(x, y, 0, 255);
+                    pixels.set(x, y, 1, 255);
+                    pixels.set(x, y, 2, 255);
+                    pixels.set(x, y, 3, 255);
+                }
+            }
+
+            let startY = options.gradient ? 10 : 0;
+            if (options.gradient) {
+                for (let x = 0; x < 256; x++) {
+                    for (let y = 0; y < 10; y++) {
+                        pixels.set(x, 255 - y, 0, x);
+                        pixels.set(x, 255 - y, 1, x);
+                        pixels.set(x, 255 - y, 2, x);
+                    }
+                }
+            }
+
+            let convfactor = (256 - startY) / Math.max(...hist);
+
+            for (let x = 0; x < 256; x++) {
+                let pixCount = Math.round(convfactor * hist[x]);
+
+                for (let y = startY; y < pixCount; y++) {
+                    pixels.set(x, 255 - y, 0, 204);
+                    pixels.set(x, 255 - y, 1, 255);
+                    pixels.set(x, 255 - y, 2, 153);
+                }
+            }
+
+            return pixels;
+        }
+
+        function output(image, datauri, mimetype) {
+
+            // This output is accesible by Image Sequencer
+            step.output = { src: datauri, format: mimetype };
+
+        }
+
+        return require('../_nomodule/PixelManipulation.js')(input, {
+            output: output,
+            changePixel: changePixel,
+            extraManipulation: extraManipulation,
+            format: input.format,
+            image: options.image,
+            inBrowser: options.inBrowser,
+            callback: callback
+        });
+
+    }
+
+    return {
+        options: options,
+        //setup: setup, // optional
+        draw: draw,
+        output: output,
+        UI: UI
+    }
+}
+
+},{"../_nomodule/PixelManipulation.js":217}],198:[function(require,module,exports){
+module.exports = [
+    require('./Module.js'),
+    require('./info.json')
+]
+},{"./Module.js":197,"./info.json":199}],199:[function(require,module,exports){
+module.exports={
+    "name": "Histogram",
+    "description": "Calculates the histogram for the image",
+    "inputs": {
+        "gradient": {
+            "type": "select",
+            "desc": "Toggle the gradient along x-axis",
+            "default": "true",
+            "values": [
+                "true",
+                "false"
+            ]
+        }
+    }
+}
+},{}],200:[function(require,module,exports){
+/*
  * Import Image module; this fetches a given remote or local image via URL
  * or data-url, and overwrites the current one. It saves the original as
  * step.metadata.input for use in future modules such as blending.
@@ -50106,7 +50308,7 @@ module.exports = function ImportImageModule(options, UI) {
   }
 }
 
-},{"../../util/GetFormat":218,"./Ui.js":198}],198:[function(require,module,exports){
+},{"../../util/GetFormat":221,"./Ui.js":201}],201:[function(require,module,exports){
 // hide on save
 module.exports = function ImportImageModuleUi(step, ui) {
 
@@ -50162,9 +50364,9 @@ module.exports = function ImportImageModuleUi(step, ui) {
   }
 }
 
-},{}],199:[function(require,module,exports){
+},{}],202:[function(require,module,exports){
 arguments[4][147][0].apply(exports,arguments)
-},{"./Module":197,"./info.json":200,"dup":147}],200:[function(require,module,exports){
+},{"./Module":200,"./info.json":203,"dup":147}],203:[function(require,module,exports){
 module.exports={
   "name": "Import Image",
   "description": "Import a new image and replace the original with it. Future versions may enable a blend mode. Specify an image by URL or by file selector.",
@@ -50177,7 +50379,26 @@ module.exports={
     }
   }
 }
-},{}],201:[function(require,module,exports){
+},{}],204:[function(require,module,exports){
+/*
+ * Sample Meta Module for demonstration purpose only
+ */
+module.exports = function NdviColormapfunction() {
+    this.expandSteps([{ 'name': 'ndvi', 'options': {} }, { 'name': 'colormap', options: {} }]);
+    return {
+        isMeta: true
+    }
+}
+},{}],205:[function(require,module,exports){
+arguments[4][147][0].apply(exports,arguments)
+},{"./Module":204,"./info.json":206,"dup":147}],206:[function(require,module,exports){
+module.exports={
+    "name": "NDVI-Colormap",
+    "description": "Sequentially Applies NDVI and Colormap steps",
+    "inputs": {},
+    "length": 2
+}
+},{}],207:[function(require,module,exports){
 /*
  * NDVI with red filter (blue channel is infrared)
  */
@@ -50237,7 +50458,7 @@ module.exports = function Ndvi(options, UI) {
   }
 }
 
-},{"../_nomodule/PixelManipulation.js":214,"./Ui.js":202}],202:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":217,"./Ui.js":208}],208:[function(require,module,exports){
 // hide on save
 module.exports = function CropModuleUi(step, ui) {
 
@@ -50273,9 +50494,9 @@ module.exports = function CropModuleUi(step, ui) {
     }
 }
 
-},{}],203:[function(require,module,exports){
+},{}],209:[function(require,module,exports){
 arguments[4][147][0].apply(exports,arguments)
-},{"./Module":201,"./info.json":204,"dup":147}],204:[function(require,module,exports){
+},{"./Module":207,"./info.json":210,"dup":147}],210:[function(require,module,exports){
 module.exports={
   "name": "NDVI",
   "description": "Normalized Difference Vegetation Index, or NDVI, is an image analysis technique used with aerial photography. It's a way to visualize the amounts of infrared and other wavelengths of light reflected from vegetation by comparing ratios of blue and red light absorbed versus green and IR light reflected. NDVI is used to evaluate the health of vegetation in satellite imagery, where it correlates with how much photosynthesis is happening. This is helpful in assessing vegetative health or stress. <a href='https://publiclab.org/ndvi'>Read more</a>.<br /><br/>This is designed for use with red-filtered single camera <a href='http://publiclab.org/infragram'>DIY Infragram cameras</a>; change to 'blue' for blue filters",
@@ -50289,26 +50510,7 @@ module.exports={
   }
 }
 
-},{}],205:[function(require,module,exports){
-/*
- * Sample Meta Module for demonstration purpose only
- */
-module.exports = function NdviColormapfunction() {
-    this.expandSteps([{ 'name': 'ndvi', 'options': {} }, { 'name': 'colormap', options: {} }]);
-    return {
-        isMeta: true
-    }
-}
-},{}],206:[function(require,module,exports){
-arguments[4][147][0].apply(exports,arguments)
-},{"./Module":205,"./info.json":207,"dup":147}],207:[function(require,module,exports){
-module.exports={
-    "name": "NDVI-Colormap",
-    "description": "Sequentially Applies NDVI and Colormap steps",
-    "inputs": {},
-    "length": 2
-}
-},{}],208:[function(require,module,exports){
+},{}],211:[function(require,module,exports){
 module.exports = function Dynamic(options, UI, util) {
 
     options.x = options.x || 0;
@@ -50380,9 +50582,9 @@ module.exports = function Dynamic(options, UI, util) {
     }
 }
 
-},{"../_nomodule/PixelManipulation.js":214,"get-pixels":23}],209:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":217,"get-pixels":23}],212:[function(require,module,exports){
 arguments[4][147][0].apply(exports,arguments)
-},{"./Module":208,"./info.json":210,"dup":147}],210:[function(require,module,exports){
+},{"./Module":211,"./info.json":213,"dup":147}],213:[function(require,module,exports){
 module.exports={
     "name": "Overlay",
     "description": "Overlays an Image over another at a given position(x,y)",
@@ -50404,7 +50606,7 @@ module.exports={
         }
     }
 }
-},{}],211:[function(require,module,exports){
+},{}],214:[function(require,module,exports){
 /*
  * Saturate an image with a value from 0 to 1
  */
@@ -50462,9 +50664,9 @@ module.exports = function Saturation(options,UI) {
   }
 }
 
-},{"../_nomodule/PixelManipulation.js":214}],212:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":217}],215:[function(require,module,exports){
 arguments[4][147][0].apply(exports,arguments)
-},{"./Module":211,"./info.json":213,"dup":147}],213:[function(require,module,exports){
+},{"./Module":214,"./info.json":216,"dup":147}],216:[function(require,module,exports){
 module.exports={
     "name": "Saturation",
     "description": "Change the saturation of the image by given value, from 0-1, with 1 being 100% saturated.",
@@ -50477,7 +50679,7 @@ module.exports={
     }
 }
 
-},{}],214:[function(require,module,exports){
+},{}],217:[function(require,module,exports){
 (function (process,Buffer){
 /*
 * General purpose per-pixel manipulation
@@ -50578,7 +50780,7 @@ module.exports = function PixelManipulation(image, options) {
 };
 
 }).call(this,require('_process'),require("buffer").Buffer)
-},{"_process":98,"buffer":4,"get-pixels":23,"pace":74,"save-pixels":111}],215:[function(require,module,exports){
+},{"_process":98,"buffer":4,"get-pixels":23,"pace":74,"save-pixels":111}],218:[function(require,module,exports){
 // special module to load an image into the start of the sequence; used in the HTML UI
 function LoadImage(ref, name, src, main_callback) {
   function makeImage(datauri) {
@@ -50685,7 +50887,7 @@ function LoadImage(ref, name, src, main_callback) {
 
 module.exports = LoadImage;
 
-},{"urify":132}],216:[function(require,module,exports){
+},{"urify":132}],219:[function(require,module,exports){
 // TODO: potentially move this into ImportImage module
 function setInputStepInit() {
 
@@ -50737,7 +50939,7 @@ function setInputStepInit() {
 }
 module.exports = setInputStepInit;
 
-},{}],217:[function(require,module,exports){
+},{}],220:[function(require,module,exports){
 /*
  * User Interface Handling Module
  */
@@ -50797,7 +50999,7 @@ module.exports = function UserInterface(events = {}) {
 
 }
 
-},{}],218:[function(require,module,exports){
+},{}],221:[function(require,module,exports){
 /*
 * Determine format from a URL or data-url, return "jpg" "png" "gif" etc
 * TODO: write a test for this using the examples
@@ -50839,7 +51041,7 @@ module.exports = function GetFormat(src) {
 
 }
 
-},{}],219:[function(require,module,exports){
+},{}],222:[function(require,module,exports){
 module.exports = {
     getPreviousStep: function() {
         return this.getStep(-1);
