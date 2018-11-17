@@ -58243,7 +58243,7 @@ ImageSequencer = function ImageSequencer(options) {
 }
 module.exports = ImageSequencer;
 
-},{"./AddStep":151,"./ExportBin":152,"./FormatInput":153,"./InsertStep":155,"./Modules":156,"./ReplaceImage":157,"./Run":158,"./SavedSequences.json":160,"./ui/LoadImage":239,"./ui/SetInputStep":240,"./ui/UserInterface":241,"./util/getStep.js":243,"fs":47}],155:[function(require,module,exports){
+},{"./AddStep":151,"./ExportBin":152,"./FormatInput":153,"./InsertStep":155,"./Modules":156,"./ReplaceImage":157,"./Run":158,"./SavedSequences.json":160,"./ui/LoadImage":243,"./ui/SetInputStep":244,"./ui/UserInterface":245,"./util/getStep.js":247,"fs":47}],155:[function(require,module,exports){
 const getStepUtils = require('./util/getStep.js');
 
 // insert one or more steps at a given index in the sequencer
@@ -58303,37 +58303,39 @@ function InsertStep(ref, image, index, name, o) {
 }
 module.exports = InsertStep;
 
-},{"./util/getStep.js":243}],156:[function(require,module,exports){
+},{"./util/getStep.js":247}],156:[function(require,module,exports){
 /*
 * Core modules and their info files
 */
 module.exports = {
-  'channel': require('./modules/Channel'),
-  'brightness': require('./modules/Brightness'),
-  'edge-detect': require('./modules/EdgeDetect'),
-  'ndvi': require('./modules/Ndvi'),
-  'crop': require('./modules/Crop'),
-  'colormap': require('./modules/Colormap'),
-  'decode-qr': require('./modules/DecodeQr'),
-  'fisheye-gl': require('./modules/FisheyeGl'),
-  'dynamic': require('./modules/Dynamic'),
-  'blur': require('./modules/Blur'),
-  'saturation': require('./modules/Saturation'),
   'average': require('./modules/Average'),
   'blend': require('./modules/Blend'),
-  'import-image': require('./modules/ImportImage'),
-  'overlay': require('./modules/Overlay'),
-  'gradient': require('./modules/Gradient'),
-  'invert': require('image-sequencer-invert'),
-  'ndvi-colormap': require('./modules/NdviColormap'),
+  'blur': require('./modules/Blur'),
+  'brightness': require('./modules/Brightness'),
+  'channel': require('./modules/Channel'),
   'colorbar': require('./modules/Colorbar'),
+  'colormap': require('./modules/Colormap'),
+  'contrast': require('./modules/Contrast'),
+  'convolution': require('./modules/Convolution'),
+  'crop': require('./modules/Crop'),
+  'decode-qr': require('./modules/DecodeQr'),
+  'dynamic': require('./modules/Dynamic'),
+  'edge-detect': require('./modules/EdgeDetect'),
+  'fisheye-gl': require('./modules/FisheyeGl'),
   'histogram': require('./modules/Histogram'),
   'gamma-correction': require('./modules/GammaCorrection'),
-  'convolution': require('./modules/Convolution'),
+  'gradient': require('./modules/Gradient'),
+  'import-image': require('./modules/ImportImage'),
+  'invert': require('image-sequencer-invert'),
+  'ndvi': require('./modules/Ndvi'),
+  'ndvi-colormap': require('./modules/NdviColormap'),
+  'overlay': require('./modules/Overlay'),
   'resize': require('./modules/Resize'),
-  'rotate': require('./modules/Rotate')
+  'rotate': require('./modules/Rotate'),
+  'saturation': require('./modules/Saturation')
 }
-},{"./modules/Average":162,"./modules/Blend":165,"./modules/Blur":169,"./modules/Brightness":172,"./modules/Channel":175,"./modules/Colorbar":178,"./modules/Colormap":182,"./modules/Convolution":186,"./modules/Crop":191,"./modules/DecodeQr":194,"./modules/Dynamic":197,"./modules/EdgeDetect":201,"./modules/FisheyeGl":204,"./modules/GammaCorrection":207,"./modules/Gradient":210,"./modules/Histogram":213,"./modules/ImportImage":217,"./modules/Ndvi":221,"./modules/NdviColormap":224,"./modules/Overlay":227,"./modules/Resize":230,"./modules/Rotate":233,"./modules/Saturation":236,"image-sequencer-invert":61}],157:[function(require,module,exports){
+
+},{"./modules/Average":162,"./modules/Blend":165,"./modules/Blur":169,"./modules/Brightness":172,"./modules/Channel":175,"./modules/Colorbar":178,"./modules/Colormap":182,"./modules/Contrast":186,"./modules/Convolution":190,"./modules/Crop":195,"./modules/DecodeQr":198,"./modules/Dynamic":201,"./modules/EdgeDetect":205,"./modules/FisheyeGl":208,"./modules/GammaCorrection":211,"./modules/Gradient":214,"./modules/Histogram":217,"./modules/ImportImage":221,"./modules/Ndvi":225,"./modules/NdviColormap":228,"./modules/Overlay":231,"./modules/Resize":234,"./modules/Rotate":237,"./modules/Saturation":240,"image-sequencer-invert":61}],157:[function(require,module,exports){
 // Uses a given image as input and replaces it with the output.
 // Works only in the browser.
 function ReplaceImage(ref,selector,steps,options) {
@@ -58489,7 +58491,7 @@ function Run(ref, json_q, callback, ind, progressObj) {
 }
 module.exports = Run;
 
-},{"./RunToolkit":159,"./util/getStep.js":243}],159:[function(require,module,exports){
+},{"./RunToolkit":159,"./util/getStep.js":247}],159:[function(require,module,exports){
 const getPixels = require('get-pixels');
 const pixelManipulation = require('./modules/_nomodule/PixelManipulation');
 const lodash = require('lodash');
@@ -58504,7 +58506,7 @@ module.exports = function(input) {
     input.savePixels = savePixels;
     return input;
 }
-},{"./modules/_nomodule/PixelManipulation":238,"data-uri-to-buffer":20,"get-pixels":30,"lodash":75,"save-pixels":138}],160:[function(require,module,exports){
+},{"./modules/_nomodule/PixelManipulation":242,"data-uri-to-buffer":20,"get-pixels":30,"lodash":75,"save-pixels":138}],160:[function(require,module,exports){
 module.exports={"sample":[{"name":"invert","options":{}},{"name":"channel","options":{"channel":"red"}},{"name":"blur","options":{"blur":"5"}}]}
 },{}],161:[function(require,module,exports){
 /*
@@ -58584,7 +58586,7 @@ module.exports = function Average(options, UI){
     }
 }
 
-},{"../_nomodule/PixelManipulation.js":238}],162:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":242}],162:[function(require,module,exports){
 module.exports = [
     require('./Module'),
     require('./info.json')
@@ -58666,7 +58668,7 @@ module.exports = function Dynamic(options, UI, util) {
     }
 }
 
-},{"../_nomodule/PixelManipulation.js":238,"get-pixels":30}],165:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":242,"get-pixels":30}],165:[function(require,module,exports){
 arguments[4][162][0].apply(exports,arguments)
 },{"./Module":164,"./info.json":166,"dup":162}],166:[function(require,module,exports){
 module.exports={
@@ -58821,7 +58823,7 @@ module.exports = function Blur(options, UI) {
     }
 }
 
-},{"../_nomodule/PixelManipulation.js":238,"./Blur":167}],169:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":242,"./Blur":167}],169:[function(require,module,exports){
 arguments[4][162][0].apply(exports,arguments)
 },{"./Module":168,"./info.json":170,"dup":162}],170:[function(require,module,exports){
 module.exports={
@@ -58895,7 +58897,7 @@ module.exports = function Brightness(options,UI){
     }
 }
 
-},{"../_nomodule/PixelManipulation.js":238}],172:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":242}],172:[function(require,module,exports){
 arguments[4][162][0].apply(exports,arguments)
 },{"./Module":171,"./info.json":173,"dup":162}],173:[function(require,module,exports){
 module.exports={
@@ -58905,9 +58907,9 @@ module.exports={
       "brightness": {
           "type": "range",
           "desc": "% brightness for the new image",
-          "default": "0",
+          "default": "100",
           "min": "0",
-          "max": "100",
+          "max": "200",
           "step": "1"
       }
   } 
@@ -58963,7 +58965,7 @@ module.exports = function Channel(options, UI) {
   }
 }
 
-},{"../_nomodule/PixelManipulation.js":238}],175:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":242}],175:[function(require,module,exports){
 arguments[4][162][0].apply(exports,arguments)
 },{"./Module":174,"./info.json":176,"dup":162}],176:[function(require,module,exports){
 module.exports={
@@ -59088,39 +59090,148 @@ function colormap(segments) {
 
 var colormaps = {
   greyscale: colormap([
-               [0,     [0,   0,   0],   [255, 255, 255] ],
+               [0,     [0,   0,   0],   [220, 20, 60] ],
                [1,     [255, 255, 255], [255, 255, 255] ]
              ]),
-  default:   colormap([
-               [0,     [0,   0,   255], [0,   255, 0]   ],
-               [0.25,  [0,   255, 0],   [255, 255, 0]   ],
-               [0.50,  [0,   255, 255], [255, 255, 0]   ],
-               [0.75,  [255, 255, 0],   [255, 0,   0]   ]
+
+ bluwhtgrngis:   colormap([
+               [0,     	[6,23,86],    [6,25, 84]    ],
+               [0.0625, [6,25,84],    [6,25, 84]    ],//1
+               [0.125,  [6,25,84],    [6,25, 84]    ],//2
+               [0.1875, [6,25,84],    [6,25, 84]    ],
+               [0.25,   [6,25,84],    [6,25,84]     ],
+               [0.3125, [6,25,84],    [9,24, 84]    ],//5
+               [0.3438, [9,24, 84],   [119,120,162] ],//5
+               [0.375,  [119,129,162],[249,250,251] ], //6
+               [0.406,  [249,250,251],[255,255,255] ], //6.5
+               [0.4375, [255,255,255],[255,255,255] ], //7 white
+               [0.50,   [255,255,255],[214,205,191] ],//8
+               [0.52,   [214,205,191],[178,175,96]  ],//8.2
+               [0.5625, [178,175,96], [151,176,53]  ],//9
+               [0.593,  [151,176,53], [146,188,12]  ],//9.5
+               [0.625,  [146,188,12], [96,161,1]    ], //10
+               [0.6875, [96,161,1],   [30,127,3]    ],//11
+               [0.75,   [30,127,3],   [0,99,1]      ],//12
+               [0.8125, [0,99,1],     [0,74,1]      ],//13
+               [0.875,  [0,74,1],     [0,52, 0]     ],//14
+               [0.9375, [0,52, 0],    [0,34,0]      ], //15
+               [0.968,  [0,34,0],     [68,70,67]    ] //16
+              ]),
+
+
+  brntogrn:   colormap([
+               [0,      [110,12,3],   [118,6,1]      ],
+               [0.0625, [118,6,1],    [141,19,6]     ],
+               [0.125,  [141,19,6],   [165,35,13]    ],
+               [0.1875, [165,35,13],  [177,59,25]    ],
+               [0.2188, [177,59,25],  [192,91,36]    ],
+               [0.25,   [192,91,36],  [214, 145, 76] ],
+               [0.3125, [214,145,76], [230,183,134]  ],
+               [0.375,  [230,183,134],[243, 224, 194]],   
+               [0.4375, [243,224,194],[250,252,229]  ],
+               [0.50,   [250,252,229],[217,235,185]  ],
+               [0.5625, [217,235,185],[184,218,143]  ],
+               [0.625,  [184,218,143],[141,202,89]   ],
+               [0.6875, [141,202,89], [80,176,61]    ],
+               [0.75,   [80,176,61],  [0, 147, 32]   ],
+               [0.8125, [0,147,32],   [1, 122, 22]   ],
+               [0.875,  [1,122,22],   [0, 114, 19]   ],
+               [0.90,   [0,114,19],   [0,105,18]     ],
+               [0.9375, [0,105,18],   [7,70,14]      ] 
+
              ]),
-  ndvi:      colormap([
-               [0,     [0,   0,   255], [38,  195, 195] ],
-               [0.5,   [0,   150, 0],   [255, 255, 0]   ],
-               [0.75,  [255, 255, 0],   [255, 50,  50]  ]
+
+
+  blutoredjet:     colormap([
+               [0,       [0,0,140],    [1,1,186]    ],
+               [0.0625,  [1,1,186],    [0,1,248]    ],
+               [0.125,   [0,1,248],    [0,70,254]   ],
+               [0.1875,  [0,70,254],   [0,130,255]  ],
+               [0.25,    [0,130,255],  [2,160,255]  ],
+	       [0.2813,  [2,160,255],  [0,187,255]  ],	//inset
+               [0.3125,  [0,187,255],  [6,250,255]  ],
+ //            [0.348,   [0,218,255],  [8,252,251]  ],//inset
+               [0.375,   [8,252,251],  [27,254,228] ], 
+               [0.406,   [27,254,228], [70,255,187] ], //insert
+               [0.4375,  [70,255,187], [104,254,151]],
+               [0.47, 	 [104,254,151],[132,255,19] ],//insert
+               [0.50,    [132,255,19], [195,255,60] ],
+               [0.5625,  [195,255,60], [231,254,25] ],
+               [0.5976,  [231,254,25], [253,246,1]  ],//insert
+               [0.625,   [253,246,1],  [252,210,1]  ], //yellow
+               [0.657,   [252,210,1],  [255,183,0]  ],//insert
+               [0.6875,  [255,183,0],  [255,125,2]  ],
+               [0.75,    [255,125,2],  [255,65, 1]  ],
+               [0.8125,  [255,65, 1],  [247, 1, 1]  ],
+               [0.875,   [247,1,1],    [200, 1,  3] ],
+               [0.9375,  [200,1,3],    [122, 3,  2] ] 
+
              ]),
+
+
+  colors16:   colormap([
+               [0,      [0,0,0],       [0,0,0]       ],
+               [0.0625, [3,1,172],     [3,1,172]     ],
+               [0.125,  [3,1,222],     [3,1, 222]    ],
+               [0.1875, [0,111,255],   [0,111,255]   ],
+               [0.25,   [3,172,255],   [3,172,255]   ],
+               [0.3125, [1,226,255],   [1,226,255]   ],
+               [0.375,  [2,255,0],     [2,255,0]     ],   
+               [0.4375, [198,254,0],   [190,254,0]   ],
+               [0.50,   [252,255,0],   [252,255,0]   ],
+               [0.5625, [255,223,3],   [255,223,3]   ],
+               [0.625,  [255,143,3],   [255,143,3]   ],
+               [0.6875, [255,95,3],    [255,95,3]    ],
+               [0.75,   [242,0,1],     [242,0,1]     ],
+               [0.8125, [245,0,170],   [245,0,170]   ],
+               [0.875,  [223,180,225], [223,180,225] ],
+               [0.9375, [255,255,255], [255,255, 255]] 
+
+             ]),
+
+   default:      colormap([
+               [0,       [45,1,121],     [25,1,137]    ],
+               [0.125,   [25,1,137],     [0,6,156]     ],
+               [0.1875,  [0,6,156],      [7,41,172]    ],
+               [0.25,    [7,41,172],     [22,84,187]   ],
+               [0.3125,  [22,84,187],    [25,125,194]  ],
+               [0.375,   [25,125,194],   [26,177,197]  ],   
+               [0.4375,  [26,177,197],   [23,199,193]  ],
+               [0.47,    [23,199,193],   [25, 200,170] ],
+               [0.50,    [25, 200,170],  [21,209,27]   ],
+               [0.5625,  [21,209,27],    [108,215,18]  ],
+               [0.625,   [108,215,18],   [166,218,19]  ],
+               [0.6875,  [166,218,19],   [206,221,20]  ],
+               [0.75,    [206,221,20],   [222,213,19 ] ],
+               [0.7813,  [222,213,19],   [222, 191, 19]],
+               [0.8125,  [222, 191, 19], [227,133,17]  ],
+               [0.875,   [227,133,17],   [231,83,16]   ],
+               [0.9375,  [231,83,16],    [220,61,48]   ] 
+
+             ]),
+
+
+  fastie:    colormap([
+               [0,     [255, 255, 255], [0,   0,   0]   ],
+               [0.167, [0,   0,   0],   [255, 255, 255] ],
+               [0.33,  [2,   0, 226],   [2,   0,   226] ],
+               [0.5,   [0,   0,   0],   [140, 140, 255] ],
+               [0.55,  [140, 140, 255], [0,   255, 0]   ],
+               [0.63,  [0,   255, 0],   [255, 255, 0]   ],
+               [0.75,  [255, 255, 0],   [255, 0,   0]   ],
+               [0.95,  [255, 0,   0],   [255, 0,   255] ]
+             ]),
+
+
   stretched: colormap([
                [0,     [0,   0,   255], [0,   0,   255] ],
                [0.1,   [0,   0,   255], [38,  195, 195] ],
                [0.5,   [0,   150, 0],   [255, 255, 0]   ],
                [0.7,   [255, 255, 0],   [255, 50,  50]  ],
                [0.9,   [255, 50,  50],  [255, 50,  50]  ]
-             ]),
-  fastie:    colormap([
-               [0,     [255, 255, 255], [0,   0,   0]   ],
-               [0.167, [0,   0,   0],   [255, 255, 255] ],
-               [0.33,  [255, 255, 255], [0,   0,   0]   ],
-               [0.5,   [0,   0,   0],   [140, 140, 255] ],
-               [0.55,  [140, 140, 255], [0,   255, 0]   ],
-               [0.63,  [0,   255, 0],   [255, 255, 0]   ],
-               [0.75,  [255, 255, 0],   [255, 0,   0]   ],
-               [0.95,  [255, 0,   0],   [255, 0,   255] ]
              ])
+ 
 }
-
 },{}],181:[function(require,module,exports){
 module.exports = function Colormap(options,UI) {
 
@@ -59165,7 +59276,7 @@ module.exports = function Colormap(options,UI) {
   }
 }
 
-},{"../_nomodule/PixelManipulation.js":238,"./Colormap":180}],182:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":242,"./Colormap":180}],182:[function(require,module,exports){
 arguments[4][162][0].apply(exports,arguments)
 },{"./Module":181,"./info.json":183,"dup":162}],183:[function(require,module,exports){
 module.exports={
@@ -59176,12 +59287,126 @@ module.exports={
       "type": "select",
       "desc": "Name of the Colormap",
       "default": "default",
-      "values": ["default","greyscale","stretched","fastie"]
+      "values": ["default","greyscale","stretched","fastie","brntogrn","blutoredjet","colors16"]
     }
   }
 }
 
 },{}],184:[function(require,module,exports){
+var _ = require('lodash');
+module.exports = exports = function(pixels , contrast){
+	let oldpix = _.cloneDeep(pixels);
+    contrast = Number(contrast)
+	if (contrast < -100) contrast = -100;
+    if (contrast > 100) contrast = 100;
+    contrast = (100.0 + contrast) / 100.0;
+    contrast *= contrast;
+        
+    for (let i = 0; i < oldpix.shape[0]; i++) {
+        for (let j = 0; j < oldpix.shape[1]; j++) {
+        	var r = oldpix.get(i,j,0)/255.0;
+        	r -= 0.5;
+            r *= contrast;
+        	r += 0.5;
+            r *= 255;
+            if (r < 0) r = 0;
+            if (r > 255) r = 255;
+
+
+            var g = oldpix.get(i,j,1)/255.0;
+            g -= 0.5;
+            g *= contrast;
+            g += 0.5;
+            g *= 255;
+            if (g < 0) g = 0;
+            if (g > 255) g = 255;
+        
+
+
+            var b = oldpix.get(i,j,2)/255.0;
+            b -= 0.5;
+            b *= contrast;
+            b += 0.5;
+            b *= 255;
+            if (b < 0) b = 0;
+            if (b > 255) b = 255;
+            
+
+            pixels.set(i, j, 0, r);
+            pixels.set(i, j, 1, g);
+            pixels.set(i, j, 2, b);
+
+        }
+    }
+    return pixels;
+}
+},{"lodash":75}],185:[function(require,module,exports){
+// /*
+// * Changes the Image Contrast
+// */
+
+module.exports = function Contrast(options, UI) {
+
+    options.contrast = options.contrast || 70
+    var output;
+
+    function draw(input, callback, progressObj) {
+
+        progressObj.stop(true);
+        progressObj.overrideFlag = true;
+
+        var step = this;
+
+        function changePixel(r, g, b, a) {
+            return [r, g, b, a]
+        }
+
+        function extraManipulation(pixels) {
+            pixels = require('./Contrast')(pixels, options.contrast)
+            return pixels
+        }
+
+        function output(image, datauri, mimetype) {
+
+            // This output is accessible by Image Sequencer
+            step.output = { src: datauri, format: mimetype };
+
+        }
+
+        return require('../_nomodule/PixelManipulation.js')(input, {
+            output: output,
+            changePixel: changePixel,
+            extraManipulation: extraManipulation,
+            format: input.format,
+            image: options.image,
+            callback: callback
+        });
+
+    }
+    return {
+        options: options,
+        draw: draw,
+        output: output,
+        UI: UI
+    }
+}
+
+},{"../_nomodule/PixelManipulation.js":242,"./Contrast":184}],186:[function(require,module,exports){
+arguments[4][162][0].apply(exports,arguments)
+},{"./Module":185,"./info.json":187,"dup":162}],187:[function(require,module,exports){
+module.exports={
+    "name": "Contrast",
+    "description": "Change the contrast of the image by given value",
+    "inputs": {
+        "contrast": {
+            "type": "Number",
+            "desc": "contrast for the new image, typically -100 to 100",
+            "default": 70 
+        }
+    } 
+}
+
+},{}],188:[function(require,module,exports){
 var _ = require('lodash');
 module.exports = exports = function(pixels, constantFactor, kernelValues){
 	let kernel = kernelGenerator(constantFactor, kernelValues), oldpix = _.cloneDeep(pixels);
@@ -59253,7 +59478,7 @@ module.exports = exports = function(pixels, constantFactor, kernelValues){
         return result;
     }
 }
-},{"lodash":75}],185:[function(require,module,exports){
+},{"lodash":75}],189:[function(require,module,exports){
 module.exports = function Convolution(options, UI) {
 
     options.kernelValues = options.kernelValues || '1 1 1 1 1 1 1 1 1';
@@ -59300,9 +59525,9 @@ module.exports = function Convolution(options, UI) {
     }
 }
 
-},{"../_nomodule/PixelManipulation.js":238,"./Convolution":184}],186:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":242,"./Convolution":188}],190:[function(require,module,exports){
 arguments[4][162][0].apply(exports,arguments)
-},{"./Module":185,"./info.json":187,"dup":162}],187:[function(require,module,exports){
+},{"./Module":189,"./info.json":191,"dup":162}],191:[function(require,module,exports){
 module.exports={
     "name": "Convolution",
     "description": "Image Convolution using a given 3x3 kernel matrix <a href='https://en.wikipedia.org/wiki/Kernel_(image_processing)'>Read more</a>",
@@ -59323,7 +59548,7 @@ module.exports={
     }
 }
 
-},{}],188:[function(require,module,exports){
+},{}],192:[function(require,module,exports){
 (function (Buffer){
 module.exports = function Crop(input,options,callback) {
 
@@ -59369,7 +59594,7 @@ module.exports = function Crop(input,options,callback) {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":5,"get-pixels":30,"save-pixels":138}],189:[function(require,module,exports){
+},{"buffer":5,"get-pixels":30,"save-pixels":138}],193:[function(require,module,exports){
 /*
  * Image Cropping module
  * Usage:
@@ -59441,7 +59666,7 @@ module.exports = function CropModule(options, UI) {
   }
 }
 
-},{"./Crop":188,"./Ui.js":190}],190:[function(require,module,exports){
+},{"./Crop":192,"./Ui.js":194}],194:[function(require,module,exports){
 // hide on save
 module.exports = function CropModuleUi(step, ui) {
 
@@ -59540,9 +59765,9 @@ module.exports = function CropModuleUi(step, ui) {
   }
 }
 
-},{}],191:[function(require,module,exports){
+},{}],195:[function(require,module,exports){
 arguments[4][162][0].apply(exports,arguments)
-},{"./Module":189,"./info.json":192,"dup":162}],192:[function(require,module,exports){
+},{"./Module":193,"./info.json":196,"dup":162}],196:[function(require,module,exports){
 module.exports={
   "name": "Crop",
   "description": "Crop image to given x, y, w, h in pixels, measured from top left",
@@ -59570,7 +59795,7 @@ module.exports={
     }
   }
 }
-},{}],193:[function(require,module,exports){
+},{}],197:[function(require,module,exports){
 /*
  * Decodes QR from a given image.
  */
@@ -59613,9 +59838,9 @@ module.exports = function DoNothing(options,UI) {
   }
 }
 
-},{"get-pixels":30,"jsqr":74}],194:[function(require,module,exports){
+},{"get-pixels":30,"jsqr":74}],198:[function(require,module,exports){
 arguments[4][162][0].apply(exports,arguments)
-},{"./Module":193,"./info.json":195,"dup":162}],195:[function(require,module,exports){
+},{"./Module":197,"./info.json":199,"dup":162}],199:[function(require,module,exports){
 module.exports={
   "name": "Decode QR",
   "description": "Search for and decode a QR code in the image",
@@ -59628,7 +59853,7 @@ module.exports={
   }
 }
 
-},{}],196:[function(require,module,exports){
+},{}],200:[function(require,module,exports){
 module.exports = function Dynamic(options,UI) {
 
   var output;
@@ -59729,9 +59954,9 @@ module.exports = function Dynamic(options,UI) {
   }
 }
 
-},{"../_nomodule/PixelManipulation.js":238}],197:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":242}],201:[function(require,module,exports){
 arguments[4][162][0].apply(exports,arguments)
-},{"./Module":196,"./info.json":198,"dup":162}],198:[function(require,module,exports){
+},{"./Module":200,"./info.json":202,"dup":162}],202:[function(require,module,exports){
 module.exports={
   "name": "Dynamic",
   "description": "A module which accepts JavaScript math expressions to produce each color channel based on the original image's color. See <a href='https://publiclab.org/wiki/infragram-sandbox'>Infragrammar</a>.",
@@ -59759,7 +59984,7 @@ module.exports={
   }
 }
 
-},{}],199:[function(require,module,exports){
+},{}],203:[function(require,module,exports){
 const _ = require('lodash')
 
 //define kernels for the sobel filter
@@ -59935,7 +60160,7 @@ function doubleThreshold(pixels, highThresholdRatio, lowThresholdRatio, mags, st
 
 
 
-},{"lodash":75}],200:[function(require,module,exports){
+},{"lodash":75}],204:[function(require,module,exports){
 /*
 * Detect Edges in an Image
 */
@@ -59994,9 +60219,9 @@ module.exports = function edgeDetect(options, UI) {
   }
 }
 
-},{"../_nomodule/PixelManipulation.js":238,"./EdgeUtils":199,"ndarray-gaussian-filter":80}],201:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":242,"./EdgeUtils":203,"ndarray-gaussian-filter":80}],205:[function(require,module,exports){
 arguments[4][162][0].apply(exports,arguments)
-},{"./Module":200,"./info.json":202,"dup":162}],202:[function(require,module,exports){
+},{"./Module":204,"./info.json":206,"dup":162}],206:[function(require,module,exports){
 module.exports={
     "name": "Detect Edges",
     "description": "this module detects edges using the Canny method, which first Gaussian blurs the image to reduce noise (amount of blur configurable in settings as `options.blur`), then applies a number of steps to highlight edges, resulting in a greyscale image where the brighter the pixel, the stronger the detected edge.<a href='https://en.wikipedia.org/wiki/Canny_edge_detector'> Read more. </a>",
@@ -60019,7 +60244,7 @@ module.exports={
     }
 }
 
-},{}],203:[function(require,module,exports){
+},{}],207:[function(require,module,exports){
 /*
  * Resolves Fisheye Effect
  */
@@ -60091,9 +60316,9 @@ module.exports = function DoNothing(options,UI) {
   }
 }
 
-},{"fisheyegl":22}],204:[function(require,module,exports){
+},{"fisheyegl":22}],208:[function(require,module,exports){
 arguments[4][162][0].apply(exports,arguments)
-},{"./Module":203,"./info.json":205,"dup":162}],205:[function(require,module,exports){
+},{"./Module":207,"./info.json":209,"dup":162}],209:[function(require,module,exports){
 module.exports={
   "name": "Fisheye GL",
   "description": "Correct fisheye, or barrel distortion, in images (with WebGL -- adapted from fisheye-correction-webgl by @bluemir).",
@@ -60161,7 +60386,7 @@ module.exports={
   }
 }
 
-},{}],206:[function(require,module,exports){
+},{}],210:[function(require,module,exports){
 module.exports = function Gamma(options,UI){
 
     var output;
@@ -60207,9 +60432,9 @@ module.exports = function Gamma(options,UI){
     }
 }
 
-},{"../_nomodule/PixelManipulation.js":238}],207:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":242}],211:[function(require,module,exports){
 arguments[4][162][0].apply(exports,arguments)
-},{"./Module":206,"./info.json":208,"dup":162}],208:[function(require,module,exports){
+},{"./Module":210,"./info.json":212,"dup":162}],212:[function(require,module,exports){
 module.exports={
     "name": "Gamma Correction",
     "description": "Apply gamma correction on the image <a href='https://en.wikipedia.org/wiki/Gamma_correction'>Read more</a>",
@@ -60222,7 +60447,7 @@ module.exports={
     } 
 }
 
-},{}],209:[function(require,module,exports){
+},{}],213:[function(require,module,exports){
 (function (Buffer){
 module.exports = function Invert(options, UI) {
 
@@ -60288,15 +60513,15 @@ module.exports = function Invert(options, UI) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":5,"get-pixels":30,"save-pixels":138}],210:[function(require,module,exports){
+},{"buffer":5,"get-pixels":30,"save-pixels":138}],214:[function(require,module,exports){
 arguments[4][162][0].apply(exports,arguments)
-},{"./Module":209,"./info.json":211,"dup":162}],211:[function(require,module,exports){
+},{"./Module":213,"./info.json":215,"dup":162}],215:[function(require,module,exports){
 module.exports={
     "name": "Gradient",
     "description": "Gives a gradient of the image",
     "inputs": {}
 }
-},{}],212:[function(require,module,exports){
+},{}],216:[function(require,module,exports){
 /*
  * Calculates the histogram of the image
  */
@@ -60391,12 +60616,12 @@ module.exports = function Channel(options, UI) {
     }
 }
 
-},{"../_nomodule/PixelManipulation.js":238}],213:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":242}],217:[function(require,module,exports){
 module.exports = [
     require('./Module.js'),
     require('./info.json')
 ]
-},{"./Module.js":212,"./info.json":214}],214:[function(require,module,exports){
+},{"./Module.js":216,"./info.json":218}],218:[function(require,module,exports){
 module.exports={
     "name": "Histogram",
     "description": "Calculates the histogram for the image",
@@ -60412,7 +60637,7 @@ module.exports={
         }
     }
 }
-},{}],215:[function(require,module,exports){
+},{}],219:[function(require,module,exports){
 /*
  * Import Image module; this fetches a given remote or local image via URL
  * or data-url, and overwrites the current one. It saves the original as
@@ -60472,7 +60697,7 @@ module.exports = function ImportImageModule(options, UI) {
   }
 }
 
-},{"../../util/GetFormat":242,"./Ui.js":216}],216:[function(require,module,exports){
+},{"../../util/GetFormat":246,"./Ui.js":220}],220:[function(require,module,exports){
 // hide on save
 module.exports = function ImportImageModuleUi(step, ui) {
 
@@ -60528,9 +60753,9 @@ module.exports = function ImportImageModuleUi(step, ui) {
   }
 }
 
-},{}],217:[function(require,module,exports){
+},{}],221:[function(require,module,exports){
 arguments[4][162][0].apply(exports,arguments)
-},{"./Module":215,"./info.json":218,"dup":162}],218:[function(require,module,exports){
+},{"./Module":219,"./info.json":222,"dup":162}],222:[function(require,module,exports){
 module.exports={
   "name": "Import Image",
   "description": "Import a new image and replace the original with it. Future versions may enable a blend mode. Specify an image by URL or by file selector.",
@@ -60543,7 +60768,7 @@ module.exports={
     }
   }
 }
-},{}],219:[function(require,module,exports){
+},{}],223:[function(require,module,exports){
 /*
  * NDVI with red filter (blue channel is infrared)
  */
@@ -60603,7 +60828,7 @@ module.exports = function Ndvi(options, UI) {
   }
 }
 
-},{"../_nomodule/PixelManipulation.js":238,"./Ui.js":220}],220:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":242,"./Ui.js":224}],224:[function(require,module,exports){
 // hide on save
 module.exports = function CropModuleUi(step, ui) {
 
@@ -60639,9 +60864,9 @@ module.exports = function CropModuleUi(step, ui) {
     }
 }
 
-},{}],221:[function(require,module,exports){
+},{}],225:[function(require,module,exports){
 arguments[4][162][0].apply(exports,arguments)
-},{"./Module":219,"./info.json":222,"dup":162}],222:[function(require,module,exports){
+},{"./Module":223,"./info.json":226,"dup":162}],226:[function(require,module,exports){
 module.exports={
   "name": "NDVI",
   "description": "Normalized Difference Vegetation Index, or NDVI, is an image analysis technique used with aerial photography. It's a way to visualize the amounts of infrared and other wavelengths of light reflected from vegetation by comparing ratios of blue and red light absorbed versus green and IR light reflected. NDVI is used to evaluate the health of vegetation in satellite imagery, where it correlates with how much photosynthesis is happening. This is helpful in assessing vegetative health or stress. <a href='https://publiclab.org/ndvi'>Read more</a>.<br /><br/>This is designed for use with red-filtered single camera <a href='http://publiclab.org/infragram'>DIY Infragram cameras</a>; change to 'blue' for blue filters",
@@ -60655,7 +60880,7 @@ module.exports={
   }
 }
 
-},{}],223:[function(require,module,exports){
+},{}],227:[function(require,module,exports){
 /*
  * Sample Meta Module for demonstration purpose only
  */
@@ -60665,16 +60890,16 @@ module.exports = function NdviColormapfunction() {
         isMeta: true
     }
 }
-},{}],224:[function(require,module,exports){
+},{}],228:[function(require,module,exports){
 arguments[4][162][0].apply(exports,arguments)
-},{"./Module":223,"./info.json":225,"dup":162}],225:[function(require,module,exports){
+},{"./Module":227,"./info.json":229,"dup":162}],229:[function(require,module,exports){
 module.exports={
     "name": "NDVI-Colormap",
     "description": "Sequentially Applies NDVI and Colormap steps",
     "inputs": {},
     "length": 2
 }
-},{}],226:[function(require,module,exports){
+},{}],230:[function(require,module,exports){
 module.exports = function Dynamic(options, UI, util) {
 
     options.x = options.x || 0;
@@ -60746,9 +60971,9 @@ module.exports = function Dynamic(options, UI, util) {
     }
 }
 
-},{"../_nomodule/PixelManipulation.js":238,"get-pixels":30}],227:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":242,"get-pixels":30}],231:[function(require,module,exports){
 arguments[4][162][0].apply(exports,arguments)
-},{"./Module":226,"./info.json":228,"dup":162}],228:[function(require,module,exports){
+},{"./Module":230,"./info.json":232,"dup":162}],232:[function(require,module,exports){
 module.exports={
     "name": "Overlay",
     "description": "Overlays an Image over another at a given position(x,y)",
@@ -60770,7 +60995,7 @@ module.exports={
         }
     }
 }
-},{}],229:[function(require,module,exports){
+},{}],233:[function(require,module,exports){
 /*
  * Resize the image by given percentage value
  */
@@ -60843,9 +61068,9 @@ module.exports = function Resize(options, UI) {
     }
 }
 
-},{"../_nomodule/PixelManipulation.js":238,"imagejs":62}],230:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":242,"imagejs":62}],234:[function(require,module,exports){
 arguments[4][162][0].apply(exports,arguments)
-},{"./Module":229,"./info.json":231,"dup":162}],231:[function(require,module,exports){
+},{"./Module":233,"./info.json":235,"dup":162}],235:[function(require,module,exports){
 module.exports={
   "name": "Resize",
   "description": "Resize image by given percentage value",
@@ -60857,7 +61082,7 @@ module.exports={
     }
   }
 }
-},{}],232:[function(require,module,exports){
+},{}],236:[function(require,module,exports){
 /*
  * Rotates image 
  */
@@ -60921,9 +61146,9 @@ module.exports = function Rotate(options, UI) {
     }
 }
 
-},{"../_nomodule/PixelManipulation.js":238,"imagejs":62}],233:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":242,"imagejs":62}],237:[function(require,module,exports){
 arguments[4][162][0].apply(exports,arguments)
-},{"./Module":232,"./info.json":234,"dup":162}],234:[function(require,module,exports){
+},{"./Module":236,"./info.json":238,"dup":162}],238:[function(require,module,exports){
 module.exports={
     "name": "Rotate",
     "description": "Rotates image by specified degrees",
@@ -60935,7 +61160,7 @@ module.exports={
       }
     }
   }
-},{}],235:[function(require,module,exports){
+},{}],239:[function(require,module,exports){
 /*
  * Saturate an image with a value from 0 to 1
  */
@@ -60993,9 +61218,9 @@ module.exports = function Saturation(options,UI) {
   }
 }
 
-},{"../_nomodule/PixelManipulation.js":238}],236:[function(require,module,exports){
+},{"../_nomodule/PixelManipulation.js":242}],240:[function(require,module,exports){
 arguments[4][162][0].apply(exports,arguments)
-},{"./Module":235,"./info.json":237,"dup":162}],237:[function(require,module,exports){
+},{"./Module":239,"./info.json":241,"dup":162}],241:[function(require,module,exports){
 module.exports={
     "name": "Saturation",
     "description": "Change the saturation of the image by given value, from 0-1, with 1 being 100% saturated.",
@@ -61008,7 +61233,7 @@ module.exports={
     }
 }
 
-},{}],238:[function(require,module,exports){
+},{}],242:[function(require,module,exports){
 (function (process,Buffer){
 /*
 * General purpose per-pixel manipulation
@@ -61109,7 +61334,7 @@ module.exports = function PixelManipulation(image, options) {
 };
 
 }).call(this,require('_process'),require("buffer").Buffer)
-},{"_process":117,"buffer":5,"get-pixels":30,"pace":94,"save-pixels":138}],239:[function(require,module,exports){
+},{"_process":117,"buffer":5,"get-pixels":30,"pace":94,"save-pixels":138}],243:[function(require,module,exports){
 // special module to load an image into the start of the sequence; used in the HTML UI
 function LoadImage(ref, name, src, main_callback) {
   function makeImage(datauri) {
@@ -61216,7 +61441,7 @@ function LoadImage(ref, name, src, main_callback) {
 
 module.exports = LoadImage;
 
-},{"urify":147}],240:[function(require,module,exports){
+},{"urify":147}],244:[function(require,module,exports){
 // TODO: potentially move this into ImportImage module
 function setInputStepInit() {
 
@@ -61268,7 +61493,7 @@ function setInputStepInit() {
 }
 module.exports = setInputStepInit;
 
-},{}],241:[function(require,module,exports){
+},{}],245:[function(require,module,exports){
 /*
  * User Interface Handling Module
  */
@@ -61328,7 +61553,7 @@ module.exports = function UserInterface(events = {}) {
 
 }
 
-},{}],242:[function(require,module,exports){
+},{}],246:[function(require,module,exports){
 /*
 * Determine format from a URL or data-url, return "jpg" "png" "gif" etc
 * TODO: write a test for this using the examples
@@ -61370,7 +61595,7 @@ module.exports = function GetFormat(src) {
 
 }
 
-},{}],243:[function(require,module,exports){
+},{}],247:[function(require,module,exports){
 module.exports = {
     getPreviousStep: function() {
         return this.getStep(-1);
