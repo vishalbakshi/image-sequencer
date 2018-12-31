@@ -1,8 +1,4 @@
-require('../../src/ImageSequencer.js');
-const sequencer = ImageSequencer({ ui: false });
 const decodeQR = require('../../src/modules/DecodeQR/Module.js')
-const jsQR = require('jsqr');
-const getPixels = require('get-pixels');
 const test = require('tape');
 const image = require('../../test/modules/images/IS-QR.js')
 
@@ -25,6 +21,7 @@ let decodedTestValue = 'http://github.com/publiclab/image-sequencer';
 
 // Test #1: test if DecodeQR's DoNothing() returns an object with Object keys: options, draw, output and UI
 test('Test 1: `output` contains expected keys before `output.draw` is called', function(t) {
+    // Create return object by calling `decodeQR`
     t.looseEqual(Object.keys(decodeQR()), ['options', 'draw', 'output', 'UI']);
     t.end();
 });
@@ -37,6 +34,8 @@ test('Test 2: `output.draw` is a function', function(t) {
 
 // Test #3: test if callback function was called inside of `draw` once step is complete
 test('Test 3: callback function was called inside of `draw` upon step completion', function(t) {
+    // Create test return object from DoNothing() function
+    // call `draw` method with IS-QR.js image and test callback
     decodeQR(options, null).draw(input, function() {
         t.pass('callback was called during test');
         t.end();
@@ -46,7 +45,10 @@ test('Test 3: callback function was called inside of `draw` upon step completion
 // Test #4: test if DecodeQR's DoNothing() return object updates with `draw` method.
 // Specifically, test if the `output` object has the new `data` key
 test('Test 4: `output` contains expected keys after `output.draw` is called', function(t) {
+    // Create test return object from DoNothing() function
     let test4ReturnObject = decodeQR(options, null);
+
+    // Send IS-QR.js as test image and send test inside callback
     test4ReturnObject.draw(input, function() {
         t.looseEqual(Object.keys(test4ReturnObject.output), ['src', 'format', 'data']);
         t.end();
@@ -56,7 +58,10 @@ test('Test 4: `output` contains expected keys after `output.draw` is called', fu
 
 // Test #5: test if `output.data` has a String value
 test('Test 5: `output` contains a String key value for `data` key', function(t) {
+    // Create test return object from DoNothing() function
     let test5ReturnObject = decodeQR(options, null);
+
+    // Send IS-QR.js as test image and send test inside callback
     test5ReturnObject.draw(input, function() {
         t.equal(typeof test5ReturnObject.output.data, 'string');
         t.end();
