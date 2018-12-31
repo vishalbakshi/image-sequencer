@@ -69,7 +69,6 @@ test('Test 5: `output` contains a String key value for `data` key', function(t) 
 
 });
 
-
 // Test #6: test if return value of `jsqr.decodeQRFromImage` is assigned to `output.data` key
 // of DoNothing()'s return object
 test('Test 6: `output` object updated with expected decoded QR `data` value', function(t){
@@ -86,7 +85,6 @@ test('Test 6: `output` object updated with expected decoded QR `data` value', fu
     });
 
 });
-
 
 // Test #7: test if `src` value of `output` equals `src` value of input`
 test('Test 7: `output.src` matches `input.src`', function(t) {
