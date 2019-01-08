@@ -1,4 +1,4 @@
-const decodeQR = require('../../src/modules/DecodeQR/Module.js')
+const decodeQR = require('../../src/modules/DecodeQr/Module.js')
 const test = require('tape');
 const image = require('../../test/modules/images/IS-QR.js')
 
